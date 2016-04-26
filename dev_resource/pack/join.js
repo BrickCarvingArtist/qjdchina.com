@@ -5,7 +5,6 @@ import {parse as _parse} from "querystring";
 import {afterSign, xhrTimeout} from "./util";
 import InputRow from "../component/input";
 import SelectGroup from "../component/select_group";
-import {province, city, region} from "../component/area_config";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
@@ -101,7 +100,7 @@ class Form extends Component{
 		};
 	}
 	componentDidMount(){
-		let dialog = store.getState().dialog.component;
+		let dialog = store.getState().dialog.component,
 			sup = [],
 			sub = [],
 			query = _parse(location.search.substr(1)),
@@ -111,6 +110,16 @@ class Form extends Component{
 			corp : query.companyName,
 			street : query.address
 		});
+		require.ensure([], require => {
+			const Area_Config = require("../lib/area_config");
+			let areaConfig = [];
+			for(let i in Area_Config){
+				areaConfig.push(Area_Config[i]);
+			}
+			this.setState({
+				areaConfig
+			});
+		}, "area_config");
 		//查询品类
 		$.ajax({
 			url : "/api/user/supplier/category"
@@ -145,6 +154,7 @@ class Form extends Component{
 		let lists = [],
 			state = this.state,
 			option = this.props.option,
+			areaConfig = state.areaConfig || [],
 			manufacturers = state.manufacturers,
 			info = state.info;
 		option.map((list, index) => {
@@ -159,7 +169,7 @@ class Form extends Component{
 							{list.label}
 						</label>
 						<SelectGroup id={list.id} default={info} option={
-							info ? this.getArea(info.provinceCode, info.cityCode, info.areaCode) : [province, city, region]
+							info ? this.getArea(info.provinceCode, info.cityCode, info.areaCode) : areaConfig
 						} checkType="region" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
 								this.setState({

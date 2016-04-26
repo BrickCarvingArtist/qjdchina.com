@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import {is} from "immutable";
 class Select extends Component{
 	constructor(props){
 		super(props);

@@ -24,7 +24,7 @@ const WebpackDevServerConfig = {
 		path : `${process.cwd()}/src/upload/`
 	},
 	LogConfig = {
-		path : `${process.cwd()}/log`
+		path : `${process.cwd()}/log/`
 	};
 export {
 	WebpackDevServerConfig,

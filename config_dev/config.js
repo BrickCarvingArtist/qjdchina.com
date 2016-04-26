@@ -20,7 +20,7 @@ const ServerConfig = {
 		path : "/srv/upload/cif_fnt"
 	},
 	LogConfig = {
-		path : `${process.cwd()}/log`
+		path : `${process.cwd()}/log/`
 	};
 export {
 	ServerConfig,

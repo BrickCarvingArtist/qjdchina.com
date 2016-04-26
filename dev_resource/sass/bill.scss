@@ -144,7 +144,7 @@ $progressIcon:url(../image/progressicon.png);
 					text-align:center;
 					line-height:25px;
 					.btnFile{
-						color:blue;
+						color:$blue;
 						cursor:pointer;
 					}
 					.btnProgress{
@@ -579,7 +579,7 @@ $progressIcon:url(../image/progressicon.png);
 				text-align:center;
 				a{
 					font-size:14px;
-					color:blue;
+					color:$blue;
 				}
 				i{
 					display:inline-block;

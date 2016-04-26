@@ -1,8 +1,8 @@
 import React, {Component, createFactory} from "react";
 import {parse} from "cookie";
+import {afterSign, xhrTimeout} from "../pack/util";
 import SignIn from "./signin";
 import SignUp from "./signup";
-import {afterSign} from "../pack/util";
 class TopNav extends Component{
 	constructor(props){
 		super(props);
@@ -35,10 +35,12 @@ class TopNav extends Component{
 			});
 		};
 		this.signOut = () => {
+			dialog =  this.state.store.getState().dialog.component;
 			$.ajax({
-				url : "/api/user/signout"
+				url : "/api/user/signout",
+				timeout : 2000
 			}).done(data => {
-				afterSign(data, data=>{}, this.state.store.getState().dialog.component);
+				afterSign(data, data=>{}, dialog);
 				t = setTimeout(() => {
 					clearTimeout(t);
 					if(location.pathname === "/"){
@@ -49,6 +51,8 @@ class TopNav extends Component{
 						location.href = "/";
 					}
 				}, 1000);
+			}).fail(xhr => {
+				xhrTimeout("退出系统结果", dialog);
 			});
 		};
 		this.signUp = () => {

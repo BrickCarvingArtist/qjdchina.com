@@ -3,7 +3,6 @@ import {findDOMNode} from "react-dom";
 import {createStore} from "redux"
 import {parse} from "cookie";
 import {afterSign, xhrTimeout} from "./util";
-import {province, city, region} from "../component/area_config";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
@@ -543,6 +542,10 @@ class Page extends Component{
 			component : this
 		});
 		this.getAuth = () => {
+			let areaConfig = this.state.areaConfig,
+				province = areaConfig[0],
+				city = areaConfig[1],
+				region = areaConfig[2];
 			$.ajax({
 				url : "/api/manage/corporation/info",
 				timeout : 2000
@@ -592,7 +595,18 @@ class Page extends Component{
 		};
 	}
 	componentDidMount(){
-		this.getAuth();
+		require.ensure([], require => {
+			const Area_Config = require("../lib/area_config");
+			let areaConfig = [];
+			for(let i in Area_Config){
+				areaConfig.push(Area_Config[i]);
+			}
+			this.setState({
+				areaConfig
+			}, () => {
+				this.getAuth();
+			});
+		}, "area_config");
 	}
 	render(){
 		let state = this.state;

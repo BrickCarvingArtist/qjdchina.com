@@ -3,7 +3,6 @@ import {findDOMNode} from "react-dom";
 import {createStore} from "redux";
 import {parse} from "cookie";
 import {afterSign, xhrTimeout} from "./util";
-import {province, city, region} from "../component/area_config";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
@@ -223,6 +222,16 @@ class Form extends Component{
 			project = this.state.project,
 			sup = [],
 			sub = [];
+		require.ensure([], require => {
+			const Area_Config = require("../lib/area_config");
+			let areaConfig = [];
+			for(let i in Area_Config){
+				areaConfig.push(Area_Config[i]);
+			}
+			this.setState({
+				areaConfig
+			});
+		}, "area_config");
 		//获取合作厂家列表
 		if(project){
 			this.setState({
@@ -255,6 +264,7 @@ class Form extends Component{
 		let lists = [],
 			state = this.state,
 			option = state.option,
+			areaConfig = state.areaConfig || [],
 			arrManufacturer = state.arrManufacturer,
 			arrProduct = state.arrProduct,
 			isSubmit,
@@ -281,7 +291,7 @@ class Form extends Component{
 							{list.label}
 						</label>
 						<SelectGroup id={list.id} default={project} option={
-							project ? this.getArea(project.provinceCode, project.cityCode, project.areaCode) : [province, city, region]
+							project ? this.getArea(project.provinceCode, project.cityCode, project.areaCode) : areaConfig
 						} checkType="region" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
 								this.setState({

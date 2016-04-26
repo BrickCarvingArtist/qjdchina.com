@@ -1,20 +1,21 @@
 import path from "path";
 import webpack from "webpack";
+const entryPath = "./dev_resource/entry/";
 export default {
 	entry : {
-		home : "./dev_resource/entry/home",
-		join : "./dev_resource/entry/join",
-		corporation : "./dev_resource/entry/corporation",
-		project : "./dev_resource/entry/project",
-		bill : "./dev_resource/entry/bill",
-		contract : "./dev_resource/entry/contract",
-		manufacturer : "./dev_resource/entry/manufacturer",
-		messageentrance : "./dev_resource/entry/messageentrance"
+		home : `${entryPath}home`,
+		join : `${entryPath}join`,
+		corporation : `${entryPath}corporation`,
+		project : `${entryPath}project`,
+		bill : `${entryPath}bill`,
+		contract : `${entryPath}contract`,
+		manufacturer : `${entryPath}manufacturer`,
+		messageentrance : `${entryPath}messageentrance`
 	},
 	output : {
-		path : process.cwd(),
-		filename : "./resource/js/[name].js",
-		publicPath : "./resource/"
+		path : `${process.cwd()}/resource/`,
+		filename : "/js/[name].js",
+		chunkFilename : "/lib/[name].min.js"
 	},
 	externals : {
 		react : "React",
@@ -47,7 +48,6 @@ export default {
 			path.join(__dirname, "./node_modules")
 		]
 	},
-	extensions : [".js"],
 	plugins : [
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
