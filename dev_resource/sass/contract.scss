@@ -1,0 +1,300 @@
+@import "./component/core";
+@import "./component/variable";
+@import "./component/dialog";
+@import "./component/datepicker";
+@import "manage";
+$icon34:url(../image/icon34.png);
+$icon80:url(../image/icon80.png);
+.singleBtn{
+	height:35px;
+	text-align:center;
+	line-height:35px;
+	font-size:14px;
+	cursor:pointer;
+}
+.mainArea{
+	.content{
+		float:left;
+		width:812px;
+		padding:0 20px 20px 12px;
+		overflow:hidden;
+		h1{
+			float:left;
+			margin:38px 0 20px 0;
+			padding-bottom:30px;
+			width:100%;
+			border-bottom:1px solid $menuBd;
+			text-indent:18px;
+			font-size:24px;
+		}
+	}
+	.list{
+		.filter{
+			position:relative;
+			float:left;
+			width:100%;
+			z-index:1;
+			label{
+				float:left;
+				font-size:14px;
+				line-height:35px;
+			}
+			.selectGroup{
+				float:left;
+				margin-right:12px;
+				margin-left:6px;
+				width:175px;
+				display:flex;
+				select{
+					float:left;
+					flex:1;
+					width:100%;
+					height:35px;
+					border:1px solid $bdGrey;
+					font-size:14px;
+					line-height:35px;
+				}
+			}
+			.dateText{
+				float:left;
+				margin-left:6px;
+				width:128px;
+				height:35px;
+				border:1px solid $bdGrey;
+				text-indent:7px;
+				line-height:35px;
+				font-size:14px;
+			}
+			.dateText:not(:last-of-type){
+				margin-right:12px;
+			}
+			.date-picker{
+				position:absolute;
+				top:34px;
+				right:0px;
+				width:292px;
+				height:300px;
+			}
+			.date-picker.off{
+				display:none;
+			}
+			label:not(:nth-of-type(n+5)), .selectGroup:not(:nth-of-type(n+3)), .dateText{
+				margin-bottom:10px;
+			}
+			.singleBtn{
+				float:right;
+				display:block;
+				width:80px;
+				border:1px solid $qjdGreen;
+				font-size:14px;
+				color:$qjdGreen;
+			}
+		}
+		table{
+			float:left;
+			margin-top:20px;
+			margin-bottom:20px;
+			width:100%;
+			font-size:12px;
+			thead{
+				th{
+					height:30px;
+					text-align:center;
+					font-weight:normal;
+					line-height:30px;
+					background-color:$menuBd;
+					border:1px solid $menuBd;
+				}
+			}
+			tbody{
+				tr:nth-of-type(odd){
+					background-color:$menuBg;
+				}
+				tr:nth-of-type(even):hover{
+					background-color:$menuBd;
+				}
+				td{
+					padding:0 6px;
+					height:25px;
+					overflow:hidden;
+					white-space:nowrap;
+					text-overflow:ellipsis;
+					border:1px solid $menuBd;
+					text-align:center;
+					line-height:25px;
+					a{
+						color:$qjdGreen;
+						cursor:pointer;
+					}
+				}
+			}
+		}
+		.blank{
+			position:relative;
+			.noData{
+				margin:0 auto;
+				height:280px;
+				background-image:$icon80;
+				background-position:50% 80px;
+				background-repeat:no-repeat;
+			}
+			.noData:after{
+				position:absolute;
+				top:195px;
+				left:0;
+				width:100%;
+				text-align:center;
+				font-size:14px;
+				color:black;
+				content:"抱歉，没有搜到您要的信息！";
+			}
+		}
+	}
+	.contract{
+		.status{
+			float:left;
+			margin-top:20px;
+			padding:10px 0;
+			width:100%;
+			overflow:hidden;
+			border:solid 1px $menuBd;
+			.title{
+				float:left;
+				width:100%;
+				text-align:center;
+				overflow:hidden;
+				i{
+					display:inline-block;
+					margin-right:10px;
+					width:34px;
+					height:34px;
+					background-image:$icon34;
+					vertical-align:middle;
+				}
+				strong{
+					font-size:20px;
+					color:$qjdGreen;
+					vertical-align:middle;
+				}
+			}
+			.note{
+				float:left;
+				margin-top:5px;
+				width:100%;
+				text-align:center;
+				font-size:12px;
+				color:$bdGrey;
+			}
+		}
+		.processing{
+			.title{
+				i{
+					background-position:0 -35px;
+				}
+			}
+		}
+		.failure{
+			.title{
+				i{
+					background-position:0 -70px;
+				}
+			}
+		}
+		embed{
+			float:left;
+			margin:10px 0;
+			width:100%;
+			height:500px;
+		}
+		.option{
+			text-align:center;
+			.singleBtn{
+				display:inline-block;
+				margin-right:20px;
+				width:220px;
+			}
+			.accept, .download{
+				background-color:$qjdGreen;
+				color:white;
+			}
+			.giveUp{
+				border:1px solid $qjdGreen;
+				color:$qjdGreen;
+			}
+		}
+		.reason{
+			float:left;
+			padding:0 10px;
+			width:100%;
+			border:1px solid $menuBd;
+			p{
+				float:left;
+				width:100%;
+				font-size:14px;
+				line-height:3;
+				strong{
+					color:$orange;
+				}
+			}
+			p:first-of-type{
+				border-bottom:1px solid $menuBd;
+			}
+		}
+	}
+}
+.dialog{
+	.content{
+		float:left;
+		width:100%;
+		overflow:hidden;
+		p{
+			float:left;
+			margin:10px 0;
+			padding:6px 12px;
+			width:100%;
+			background-color:rgb(253, 248, 228);
+			border:1px solid rgb(252, 236, 172);
+			font-size:12px;
+			line-height:2;
+			color:rgb(132, 109, 65);
+		}
+		.reason{
+			position:relative;
+			float:left;
+			width:100%;
+			overflow:hidden;
+			textarea{
+				float:left;
+				padding:6px;
+				width:100%;
+				height:120px;
+				border:1px solid $menuBd;
+				font-size:12px;
+				line-height:1.5;
+			}
+			em{
+				position:absolute;
+				bottom:10px;
+				right:10px;
+				font-size:12px;
+			}
+		}
+		.normal{
+			em{
+				color:$bdGrey;
+			}
+		}
+		.limit{
+			em{
+				color:$red;
+			}
+		}
+		.singleBtn{
+			float:left;
+			margin:10px 76px 0;
+			width:80px;
+			background-color:$qjdGreen;
+			color:white;
+		}
+	}
+}

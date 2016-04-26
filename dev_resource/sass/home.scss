@@ -1,0 +1,138 @@
+@import "./component/core";
+@import "./component/variable";
+@import "./component/dialog";
+@import "./component/header";
+@import "./component/footer";
+$imgStaticBg:url(../image/homebg.png);
+$imgStatic:url(../image/home.png);
+$imgPartner:url(../image/partner.png);
+$imgManufacturer:url(../image/manufacturer.png);
+.singleBtn{
+	height:35px;
+	text-align:center;
+	line-height:35px;
+	font-size:14px;
+	cursor:pointer;
+}
+.banner, .static, .media, .partner, .manufacturer{
+	float:left;
+	width:100%;
+}
+.banner{
+	position:relative;
+	height:360px;
+	.item{
+		position:absolute;
+		top:0;
+		left:0;
+		display:block;
+		width:100%;
+		height:100%;
+		background-position:0 center;
+	}
+	.current{
+		z-index:1;
+	}
+	.normal{
+		z-index:0;
+	}
+	.w1000{
+		position:relative;
+		z-index:2;
+	}
+	.signIn{
+		float:right;
+		margin:40px 0;
+		padding:10px;
+		width:240px;
+		height:260px;
+		background-color:$menuBg;
+		.singleBtn{
+			margin:20px 10px;
+			width:220px;
+		}
+		.anchorSignUp, .anchorReset{
+			font-size:14px;
+			color:$qjdGreen;
+			cursor:pointer;
+		}
+		.anchorSignUp{
+			float:left;
+			margin-left:10px;
+		}
+		.anchorReset{
+			float:right;
+			margin-right:10px;
+		}
+	}
+}
+.static{
+	.bg{
+		float:left;
+		width:100%;
+		height:265px;
+		background-image:$imgStaticBg;
+	}
+	.w1000{
+		position:relative;
+		height:1292px;
+		background-image:$imgStatic;
+		z-index:1;
+	}
+}
+.media{
+	padding:25px 0;
+	background-color:$menuBd;
+	h1{
+		float:left;
+		width:100%;
+		text-align:center;
+		font-size:30px;
+	}
+}
+.partner, .manufacturer{
+	padding:25px 0;
+	h1{
+		float:left;
+		width:100%;
+		text-align:center;
+		font-size:30px;
+	}
+	.container{
+		float:left;
+		width:1025px;
+		overflow:hidden;
+	}
+	a{
+		float:left;
+		margin-top:25px;
+		margin-right:25px;
+		display:block;
+		width:180px;
+		height:50px;
+	}
+}
+.partner{
+	a{
+		background-image:$imgPartner;
+	}
+	@for $i from 0 to 8{
+		a:nth-of-type(#{$i+1}){
+			background-position:0 -51px*$i;
+		}
+	}
+}
+.manufacturer{
+	a{
+		background-image:$imgManufacturer;
+	}
+	@for $i from 0 to 12{
+		a:nth-of-type(#{$i+1}){
+			background-position:0 -51px*$i;
+		}
+	}
+}
+.footer{
+	float:left;
+	width:100%;
+}

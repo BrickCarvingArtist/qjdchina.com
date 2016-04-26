@@ -1,0 +1,398 @@
+@import "./component/core";
+@import "./component/variable";
+@import "./component/dialog";
+@import "manage";
+$authIcon:url(../image/credit.png);
+$progressIcon:url(../image/progressicon.png);
+.singleBtn{
+	width:80px;
+	height:35px;
+	background-color:$qjdGreen !important;
+	text-align:center;
+	color:white;
+	line-height:35px;
+	cursor:pointer;
+}
+.mainArea{
+	.content{
+		float:left;
+		width:812px;
+		padding:0 20px 20px 12px;
+		overflow:hidden;
+		h1{
+			float:left;
+			padding-bottom:30px;
+			width:100%;
+			border-bottom:1px solid $menuBd;
+			text-indent:18px;
+			font-size:24px;
+		}
+	}
+	.infoPart{
+		position:relative;
+		h1{
+			margin-top:38px;
+		}
+		.auth{
+			position:absolute;
+			top:30px;
+			right:20px;
+			padding-left:50px;
+			background-image:$authIcon;
+			background-repeat:no-repeat;
+			cursor:pointer;
+			span{
+				font-size:14px;
+				line-height:22px;
+			}
+			span:last-of-type{
+				color:$qjdGreen;
+			}
+		}
+		.authorized{
+			background-position:0 -50px;
+		}
+		.notAuthorized{
+			background-position:0 -6px;
+		}
+		.info{
+			float:left;
+			width:100%;
+			overflow:hidden;
+			h2{
+				float:left;
+				margin:30px 0 10px;
+				width:100%;
+				text-indent:18px;
+				font-size:16px;
+			}
+			p{
+				float:left;
+				width:100%;
+				font-size:14px;
+				line-height:24px;
+				span{
+					float:left;
+					display:inline-block;
+				}
+				.name{
+					width:100px;
+					text-indent:18px;
+				}
+				.value{
+					width:680px;
+				}
+			}
+		}
+	}
+	.authPart{
+		p{
+			font-size:12px;
+			text-align:center;
+			line-height:28px;
+		}
+		.progress{
+			.bar{
+				position:relative;
+				float:left;
+				width:100%;
+				height:140px;
+				i{
+					position:absolute;
+					top:55px;
+					width:17px;
+					height:17px;
+					background-image:$progressIcon;
+				}
+				i:nth-of-type(1){
+					left:158px;
+				}
+				i:nth-of-type(2){
+					left:383px;
+				}
+				i:nth-of-type(3){
+					left:608px;
+				}
+				p{
+					position:absolute;
+					top:62px;
+					left:164px;
+					width:0;
+					height:2px;
+					border-right-style:solid;
+					border-right-color:$menuBd;
+					border-left-style:solid;
+					border-left-color:$qjdGreen;
+				}
+				ul{
+					position:absolute;
+					top:84px;
+					left:107px;
+					width:565px;
+					li{
+						float:left;
+						width:20%;
+						text-align:center;
+						span{
+							display:inline-block;
+							width:100%;
+							font-size:12px; 
+							line-height:1.5;
+						}
+					}
+				}
+			}
+			.bar:before, .bar:after{
+				position:absolute;
+				top:28px;
+				display:block;
+				width:30px;
+				height:30px;
+				background-image:$progressIcon;
+				background-repeat:no-repeat;
+				content:"";
+			}
+			.bar:before{
+				left:262px;
+				background-position:0 0;
+			}
+			.bar:after{
+				right:262px;
+				background-position:-42px 0;
+			}
+			.step1{
+				p{
+					border-right-width:339px;
+					border-left-width:113px;
+				}
+				i:nth-of-type(1){
+					background-position:0 -32px;
+				}
+				i:nth-of-type(n+2){
+					background-position:-51px -32px;
+				}
+				li:nth-of-type(1), li:nth-of-type(2){
+					span{
+						color:$qjdGreen;
+					}
+				}
+			}
+			.step2{
+				i:nth-of-type(1){
+					background-position:0 -32px;
+				}
+				i:nth-of-type(3){
+					background-position:-51px -32px;
+				}
+				li:nth-of-type(1), li:nth-of-type(2){
+					span{
+						color:$qjdGreen;
+					}
+				}
+			}
+			.step2.success{
+				p{
+					border-right-width:113px;
+					border-left-width:339px;
+				}
+				i:nth-of-type(2){
+					background-position:0 -32px;
+				}
+				li:nth-of-type(3), li:nth-of-type(4){
+					span{
+						color:$qjdGreen;
+					}
+				}
+			}
+			.step2.error{
+				p{
+					border-right-width:226px;
+					border-left-width:226px;
+				}
+				i:nth-of-type(2){
+					background-position:-26px -32px;
+				}
+				li:nth-of-type(3){
+					span{
+						color:red;
+					}
+				}
+			}
+			.step3{
+				p{
+					border-right-width:0;
+					border-left-width:452px;
+				}
+				i:nth-of-type(1), i:nth-of-type(2){
+					background-position:0 -32px;
+				}
+			}
+			.step3.normal{
+				i:nth-of-type(3){
+					background-position:-51px -32px;
+				}
+			}
+			.step3.success{
+				i:nth-of-type(n+2){
+					background-position:0 -32px;
+				}
+				li{
+					span{
+						color:$qjdGreen;
+					}
+				}
+			}
+			.step3.error{
+				i:nth-of-type(3){
+					background-position:-26px -33px;
+				}
+				li:not(:last-of-type){
+					span{
+						color:$qjdGreen;
+					}
+				}
+				li:last-of-type{
+					span{
+						color:red;
+					}
+				}
+			}
+			> p{
+				float:left;
+				width:100%;
+				color:$bdGrey;
+			}
+		}
+		.frmAuth{
+			table{
+				width:100%;
+				font-size:12px;
+				thead{
+					th{
+						height:30px;
+						text-align:center;
+						font-weight:normal;
+						line-height:30px;
+						border:1px solid $menuBd;
+					}
+					th:nth-of-type(1){
+						width:80px;
+					}
+					th:nth-of-type(2){
+						width:600px;
+					}
+					th:nth-of-type(3){
+						width:100px;
+					}
+				}
+				tbody{
+					tr:nth-of-type(odd){
+						background-color:$menuBg;
+					}
+					tr:nth-of-type(even):hover{
+						background-color:$menuBd;
+					}
+					tr.normal{
+						td:nth-of-type(2):before{
+							content:"";
+						}
+					}
+					tr.required{
+						td:nth-of-type(2):before{
+							content:"＊";
+							color:red;
+						}
+					}
+					td{
+						height:24px;
+						line-height:24px;
+						border:1px solid $menuBd;
+						span{
+							color:blue;
+							cursor:pointer;
+						}
+					}
+					td:nth-of-type(2n+1){
+						text-align:center;
+					}
+					td:nth-of-type(2):before{
+						display:inline-block;
+						width:24px;
+						text-align:center;
+						font-size:16px;
+						vertical-align:bottom;
+					}
+				}
+			}
+			.singleBtn{
+				margin:20px 346px;
+			}
+		}
+	}
+	.crumb{
+		float:left;
+		margin:24px 0;
+		padding-left:18px;
+		width:100%;
+		a{
+			font-size:14px;
+			color:rgb(250, 176, 72);
+		}
+		a:not(:last-of-type):after{
+			content:" > ";
+		}
+	}
+}
+.dialog{
+	.content{
+		float:left;
+		width:100%;
+		ul{
+			float:left;
+			margin-top:10px;
+			width:100%;
+			overflow:hidden;
+			li{
+				float:left;
+				margin-top:5px;
+				width:100%;
+				text-align:center;
+				a{
+					font-size:14px;
+				}
+				i{
+					display:inline-block;
+					width:26px;
+					height:26px;
+					background-image:$dialogIcon;
+					background-position:0 -241px;
+					vertical-align:middle;
+					cursor:pointer;
+				}
+			}
+		}
+		.singleBtn{
+			float:left;
+			position:relative;
+			margin:20px 76px 0;
+			input{
+				position:absolute;
+				top:0;
+				left:0;
+				width:100%;
+				height:100%;
+				opacity:0;
+				cursor:pointer;
+				z-index:1;
+			}
+		}
+		.singleBtn:after{
+			position:absolute;
+			top:0;
+			left:0;
+			width:100%;
+			font-size:14px;
+			content:"上传证书";
+		}
+	}
+}

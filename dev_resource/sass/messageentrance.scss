@@ -1,0 +1,110 @@
+@import "./component/core";
+@import "./component/variable";
+@import "./component/dialog";
+@import "./component/header";
+@import "./component/footer";
+$message:url(../image/message.png);
+body{
+	background-color:$bgGrey;
+}
+.footer{
+	position:fixed;
+	left:0;
+	bottom:0;
+}
+.singleBtn{
+	height:35px;
+	text-align:center;
+	line-height:35px;
+	font-size:14px;
+	cursor:pointer;
+}
+.mainArea{
+	float:left;
+	margin:32px 0 132px;
+	width:100%;
+	overflow:hidden;
+	.content{
+		float:left;
+		width:100%;
+		overflow:hidden;
+		.w1000{
+			height:400px;
+			background-color:white;
+			background-image:$message;
+			background-repeat:no-repeat;
+			background-position:140px center;
+		}
+		form{
+			float:right;
+			margin-top:80px;
+			margin-right:200px;
+			width:300px;
+			h1{
+				float:left;
+				margin-bottom:20px;
+				width:100%;
+				border-bottom:1px solid $menuBd;
+				font-size:18px;
+				line-height:3;
+			}
+			.row{
+				position:relative;
+				float:left;
+				margin-bottom:20px;
+				width:100%;
+				em{
+					position:absolute;
+					right:14px;
+					line-height:35px;
+					font-size:16px;
+				}
+				img{
+					float:left;
+					width:80px;
+					height:35px;
+					cursor:pointer;
+				}
+			}
+			label{
+				float:left;
+				display:inline-block;
+				width:70px;
+				font-size:14px;
+				line-height:35px;
+			}
+			.ipt-txt{
+				float:left;
+				margin-left:10px;
+				width:220px;
+				height:35px;
+				border:1px solid $bdGrey;
+				font-size:14px;
+				line-height:35px;
+				text-indent:7px;
+			}
+			.ipt-txt.withButton{
+				margin-right:10px;
+				width:130px;
+			}
+			.ipt-txt.disabled{
+				background-color:$menuBd;
+				outline:none;
+			}
+			.singleBtn{
+				float:left;
+				display:block;
+			}
+			a.singleBtn{
+				width:80px;
+				border:1px solid $qjdGreen;
+				color:$qjdGreen;
+			}
+			input.singleBtn{
+				width:100%;
+				background-color:$qjdGreen;
+				color:white;
+			}
+		}
+	}
+}

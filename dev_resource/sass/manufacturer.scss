@@ -1,0 +1,175 @@
+@import "./component/core";
+@import "./component/variable";
+@import "./component/dialog";
+@import "manage";
+$icon:url(../image/joinicon.png);
+.singleBtn{
+	display:block;
+	width:80px;
+	height:35px;
+	text-align:center;
+	line-height:35px;
+	font-size:14px;
+	cursor:pointer;
+}
+.mainArea{
+	.content{
+		position:relative;
+		float:left;
+		width:812px;
+		padding:0 20px 20px 12px;
+		overflow:hidden;
+		h1{
+			float:left;
+			margin-top:38px;
+			padding-bottom:30px;
+			width:100%;
+			border-bottom:1px solid $menuBd;
+			text-indent:18px;
+			font-size:24px;
+		}
+		table{
+			float:left;
+			margin-top:20px;
+			margin-bottom:20px;
+			width:100%;
+			font-size:12px;
+			thead{
+				th{
+					height:30px;
+					text-align:center;
+					font-weight:normal;
+					line-height:30px;
+					background-color:$menuBd;
+					border:1px solid $menuBd;
+				}
+			}
+			tbody{
+				tr:nth-of-type(odd){
+					background-color:$menuBg;
+				}
+				tr:nth-of-type(even):hover{
+					background-color:$menuBd;
+				}
+				td{
+					padding:0 6px;
+					height:25px;
+					overflow:hidden;
+					white-space:nowrap;
+					text-overflow:ellipsis;
+					border:1px solid $menuBd;
+					text-align:center;
+					line-height:25px;
+					.btnFile{
+						color:$qjdGreen;
+						cursor:pointer;
+					}
+				}
+			}
+		}
+		.add{
+			position:relative;
+			float:left;
+			display:inline-block;
+			width:17px;
+			height:17px;
+			background-image:$icon;
+			background-repeat:no-repeat;
+			background-position:-26px 0;
+			cursor:pointer;
+		}
+		.add:after{
+			position:absolute;
+			top:0;
+			left:20px;
+			font-size:14px;
+			line-height:18px;
+			content:"新增合作厂家";
+			white-space:nowrap;
+			color:$qjdGreen;
+		}
+		.singleBtn{
+			float:left;
+			margin-left:10px;
+		}
+		.submit{
+			background-color:$qjdGreen;
+			color:white;
+		}
+		.cancel{
+			border:1px solid $qjdGreen;
+			color:$qjdGreen;
+		}
+		.selectGroup{
+			float:left;
+			width:600px;
+			display:flex;
+			select{
+				float:left;
+				flex:1;
+				width:60px;
+				height:35px;
+				border:1px solid $bdGrey;
+				font-size:14px;
+				line-height:35px;
+			}
+		}
+	}
+}
+.dialog{
+	.content{
+		float:left;
+		width:100%;
+		ul{
+			float:left;
+			margin-top:10px;
+			width:100%;
+			overflow:hidden;
+			li{
+				float:left;
+				margin-top:5px;
+				width:100%;
+				text-align:center;
+				a{
+					font-size:14px;
+					color:blue;
+				}
+				i{
+					display:inline-block;
+					width:26px;
+					height:26px;
+					background-image:$dialogIcon;
+					background-position:0 -241px;
+					vertical-align:middle;
+					cursor:pointer;
+				}
+			}
+		}
+		.singleBtn{
+			float:left;
+			position:relative;
+			margin:20px 76px 0;
+			width:80px;
+			background-color:$qjdGreen;
+			color:white;
+			input{
+				position:absolute;
+				top:0;
+				left:0;
+				width:100%;
+				height:100%;
+				opacity:0;
+				cursor:pointer;
+				z-index:1;
+			}
+		}
+		.singleBtn:after{
+			position:absolute;
+			top:0;
+			left:0;
+			width:100%;
+			font-size:12px;
+			content:"上传证书";
+		}
+	}
+}
