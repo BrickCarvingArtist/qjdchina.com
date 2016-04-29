@@ -7,18 +7,17 @@ html
 			link(rel="stylesheet", href=i)
 		title!= title
 	body
+		<!--[if lt IE 10]>
 		.compatible
 			.w1000
 				strong 为了保障信息安全和展现
 				span 请使用IE9以上、谷歌Chrome等现代浏览器
+		<![endif]-->
 		.main!= page
 		<!--[if lt IE 10]>
 		<script src="https://as.alipayobjects.com/g/component/??console-polyfill/0.2.2/index.js,es5-shim/4.5.7/es5-shim.min.js,es5-shim/4.5.7/es5-sham.min.js,html5shiv/3.7.2/html5shiv.min.js,media-match/2.0.2/media.match.min.js"></script>
 		<![endif]-->
-		script(src="/lib/react@0.15.1.min.js")
-		script(src="/lib/react-dom@0.15.1.min.js")
-		script(src="/lib/redux.min.js")
-		script(src="/lib/immutable.min.js")
+		script(src="/lib/dependencies.min.js")
 		script(src="/lib/jquery@2.2.0.min.js")
 		each i in script
 			script(src=i)

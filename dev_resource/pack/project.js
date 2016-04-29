@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {findDOMNode} from "react-dom";
 import {createStore} from "redux";
-import {parse} from "cookie";
+import {parse} from "querystring";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
@@ -75,6 +75,8 @@ class Form extends Component{
 		super(props);
 		this.state = props;
 		let dialog = store.getState().dialog.component,
+			code,
+			id,
 			name,
 			supplierId,
 			productId,
@@ -144,21 +146,13 @@ class Form extends Component{
 		this.getAddress = (arrAddress, type) => {
 			return arrAddress[type];
 		};
-		//申请期限
-		this.getPeriod = (project, id) => {
-			let period = [],
-				index;
-			if(project){
-				index = project[id];
-				period[index] = `${index}个月`;
-			}else{
-				period = [,,"2个月", "3个月", "4个月", "5个月", "6个月"];
-			}
-			return period;
-		};
 		//所在地
 		this.getArea = (provinceCode, cityCode, areaCode) => {
-			let arrProvince = [],
+			let areaConfig = this.state.areaConfig,
+				province = areaConfig[0],
+				city = areaConfig[1],
+				region = areaConfig[2],
+				arrProvince = [],
 				arrCity = [],
 				arrArea = [];
 			arrProvince[provinceCode] = province[provinceCode];
@@ -174,6 +168,8 @@ class Form extends Component{
 		this.handleSubmit = () => {
 			let state = this.state,
 				arrAddress = state.arrAddress;
+			code = state.project ? state.project.code : "";
+			id = state.project ? state.project.id : "";
 			name = this.getIptVal("name");
 			provinceCode = this.getAddress(arrAddress, 0);
 			cityCode = this.getAddress(arrAddress, 1);
@@ -192,6 +188,8 @@ class Form extends Component{
 				url : "/api/manage/project/apply",
 				timeout : 2000,
 				data : {
+					code,
+					id,
 					name,
 					supplierId,
 					productId,
@@ -272,7 +270,7 @@ class Form extends Component{
 		option.map((list, index) => {
 			if(list.iptType){
 				lists.push(
-					<InputRow option={list} key={index} ref={list.id} value={project ? project[list.id] : null} validate={
+					<InputRow option={list} key={index} ref={list.id} value={project ? project[list.id] : undefined} validate={
 						{
 							type : ["noEmpties", "noBlank", "noScript"],
 							callback : message => {
@@ -291,7 +289,7 @@ class Form extends Component{
 							{list.label}
 						</label>
 						<SelectGroup id={list.id} default={project} option={
-							project ? this.getArea(project.provinceCode, project.cityCode, project.areaCode) : areaConfig
+							project && areaConfig.length ? this.getArea(project.provinceCode, project.cityCode, project.areaCode) : areaConfig
 						} checkType="region" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
 								this.setState({
@@ -301,7 +299,7 @@ class Form extends Component{
 							}
 						} />
 						{
-							state.showAddress ? <input className={`ipt-txt single${project && project.address ? " disabled" : ""}`} placeholder={`请输入${list.label}`} ref="street" value={project ? project.address : null} onChange={this.handleStreet} /> : []
+							state.showAddress ? <input className={`ipt-txt single${project && project.address ? " disabled" : ""}`} placeholder={`请输入${list.label}`} ref="street" value={project ? project.address : undefined} onChange={this.handleStreet} /> : []
 						}
 					</div>
 				);
@@ -310,9 +308,9 @@ class Form extends Component{
 						<label htmlFor={list.id}>
 							{list.label}
 						</label>
-						<SelectGroup id={list.id} default={project} option={
+						<SelectGroup id={list.id} option={
 							[
-								this.getPeriod(project, list.id)
+								[,,"2个月", "3个月", "4个月", "5个月", "6个月"]
 							]
 						} checkType="single" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
@@ -613,36 +611,13 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
-		this.getAuth = () => {
-			$.ajax({
-				url : "/api/manage/corporation/info",
-				timeout : 2000
-			}).done(data => {
-				let signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
-				if(signType){
-					this.setState({
-						signType,
-						mobile : parse(document.cookie).username
-					});
-				}
-			}).fail(xhr => {
-				xhrTimeout("个人信息", dialog);
-			});
-		};
-	}
-	componentDidMount(){
-		this.getAuth();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Main />
 				<Footer />
 			</div>

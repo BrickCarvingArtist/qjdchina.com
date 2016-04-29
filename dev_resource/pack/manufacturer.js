@@ -1,7 +1,6 @@
 import React, {Component, createFactory} from "react";
 import {findDOMNode} from "react-dom";
 import {createStore} from "redux";
-import {parse} from "cookie";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
@@ -281,11 +280,12 @@ class Tr extends Component{
 						i === "categoryCode" ?
 							this.getCategoryName(value) :
 							i === "status" ?
-								this.getStatusName(value) :
+								`${option["uploadPath"].value ? "已" : "未"}上传证书` :
 								i === "uploadPath" ?
 									(
 										<a className="btnFile" onClick={this.handleFile}>
-											{option[i].value ? "重新上传" : "上传证书"}</a>
+											{option[i].value ? "重新上传" : "上传证书"}
+										</a>
 									) : value
 					}
 				</td>
@@ -444,36 +444,13 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
-		this.getAuth = () => {
-			$.ajax({
-				url : "/api/manage/corporation/info",
-				timeout : 2000
-			}).done(data => {
-				let signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
-				if(signType){
-					this.setState({
-						signType,
-						mobile : parse(document.cookie).username
-					});
-				}
-			}).fail(xhr => {
-				xhrTimeout("个人信息", store.getState().dialog.component);
-			});
-		};
-	}
-	componentDidMount(){
-		this.getAuth();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Main />
 				<Footer />
 			</div>

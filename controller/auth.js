@@ -26,9 +26,13 @@ export default (router) => {
 							reject(err);
 						}else{
 							if(data){
-								resolve(JSON.parse(data).member ? 2 : 1);
+								let signType = JSON.parse(data).member ? 2 : 1;
+								res.cookie("signtype", signType, {
+									path : "/"
+								});
+								resolve(signType);
 							}else{
-								res.clearCookie("sso_cookie");
+								res.clearCookie("sso_cookie").clearCookie("JSESSIONID").clearCookie("username").clearCookie("corpname").clearCookie("signtype");
 								resolve(0);
 							}
 						}
@@ -47,7 +51,7 @@ export default (router) => {
 					if(pathType){
 						res.json({
 							code : 401,
-							message : "无权限访问"
+							message : "登录超时请刷新页面重新登录或无权限访问"
 						});
 					}else{
 						res.redirect(`/?referer=${req.path}`);

@@ -1,13 +1,11 @@
 import React, {Component, createFactory} from "react";
 import {createStore} from "redux";
-import {parse} from "cookie";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
 import Menu from "../component/menu";
 import SelectGroup from "../component/select_group";
-import DatePicker from "react-date-picker";
 import {stringify} from "qs";
 let store = createStore((state = [], action) => {
 	if(state[action.type]){
@@ -60,6 +58,7 @@ class DialogContent extends Component{
 			$.ajax({
 				url : "/api/manage/contract/giveup",
 				type : "post",
+				timeout : 2000,
 				data : {
 					id : store.getState().contract.component.state.id,
 					signFailedReason : this.refs.reason.state.reason
@@ -128,13 +127,15 @@ class Contract extends Component{
 			let state = this.state;
 			$.ajax({
 				url : "/api/manage/contract/accept",
+				timeout : 2000,
 				data : {
+					referer : location.href,
 					mobile : state.mobile,
-					id : state.id
+					code : state.code
 				}
 			}).done(data => {
 				afterSign(data, data => {
-
+					console.log(data);
 				}, dialog);
 			}).fail(xhr => {
 				xhrTimeout("签约结果", dialog);
@@ -155,7 +156,6 @@ class Contract extends Component{
 		};
 	}
 	componentDidUpdate(){
-		console.log(this.state)
 		let dialog = store.getState().dialog.component,
 			state = this.state;
 		this.state.detail || $.ajax({
@@ -169,7 +169,6 @@ class Contract extends Component{
 				let _data = data.data;
 				this.setState({
 					detail : 1,
-					id : _data.id,
 					mobile : _data.mobile,
 					status : _data.status,
 					from : _data.signFailedFrom,
@@ -183,9 +182,8 @@ class Contract extends Component{
 	render(){
 		let state = this.state,
 			status = this.getStatus(),
-			filePath = state.id && state.type ? `${state.filePath}?${stringify({
-				id : state.id,
-				type : state.type
+			filePath = state.code ? `${state.filePath}?${stringify({
+				code : state.code
 			})}` : "";
 		return (
 			<div className="content contract">
@@ -323,6 +321,12 @@ class Filter extends Component{
 	}
 	componentDidMount(){
 		let dialog = store.getState().dialog.component;
+		require.ensure([], require => {
+			let datePicker = require("react-date-picker");
+			this.setState({
+				datePicker
+			});
+		}, "datepicker");
 		$.ajax({
 			url : "/api/manage/project/list",
 			timeout : 2000
@@ -355,12 +359,13 @@ class Filter extends Component{
 				}
 				this.setState(option);
 			}, dialog);
-		}).fail(status => {
+		}).fail(xhr => {
 			xhrTimeout("合同类别及合同状态", dialog);
 		});
 	}
 	render(){
 		let state = this.state,
+			DatePicker = state.datePicker,
 			isStart = state.dateStart,
 			isEnd = state.dateEnd,
 			startDate = state.startDate,
@@ -391,16 +396,19 @@ class Filter extends Component{
 				<input className="dateText" placeholder="请选择起始日" readOnly="readOnly" onClick={this.toggleStart} value={this.state.startDate} />
 				<label>至:</label>
 				<input className="dateText" placeholder="请选择终止日" readOnly="readOnly" onClick={this.toggleEnd} value={this.state.endDate} />
-				<DatePicker
-					className={`${isStart || isEnd ? "on" : "off"}${isStart ? " start" : ""}${isEnd ? " end" : ""}`}
-					minDate={isStart ? "2010-01-01" : startDate || "2010-01-01"}
-					maxDate={isEnd ? Date.now() : endDate || Date.now()}
-					defaultDate={Date.now()}
-					highlightWeekends={true}
-					locale="zh-cn"
-					todayText="当前月"
-					gotoSelectedText="选中日"
-					onChange={this[`getDate${isStart ? "Start" : "End"}`]} />
+				{
+					DatePicker ?
+						<DatePicker
+							className={`${isStart || isEnd ? "on" : "off"}${isStart ? " start" : ""}${isEnd ? " end" : ""}`}
+							minDate={isStart ? "2010-01-01" : startDate || "2010-01-01"}
+							maxDate={isEnd ? Date.now() : endDate || Date.now()}
+							defaultDate={Date.now()}
+							highlightWeekends={true}
+							locale="zh-cn"
+							todayText="当前月"
+							gotoSelectedText="选中日"
+							onChange={this[`getDate${isStart ? "Start" : "End"}`]} /> : []
+				}
 				<label htmlFor="status">状态:</label>
 				<SelectGroup id="status" option={
 					[this.getStatus()]
@@ -440,9 +448,7 @@ class Tr extends Component{
 			state.isSign || content.handleSign(() => {
 				let option = state.option;
 				store.getState().contract.component.setState({
-					id : state.id,
 					code : state.option.code,
-					type : option.type,
 					isFailed : this.getIsFailed(option) ? 0 : 1
 				});
 			});
@@ -544,7 +550,7 @@ class Table extends Component{
 		}
 		option && option.map((list, index) => {
 			lists.push(
-				<Tr id={list.id} option={this.getOption(list)} key={index} userClass={this} />
+				<Tr option={this.getOption(list)} key={index} userClass={this} />
 			);
 		});
 		return (
@@ -628,35 +634,13 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
-		this.getAuth = () => {
-			$.ajax({
-				url : "/api/manage/corporation/info"
-			}).done(data => {
-				let signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
-				if(signType){
-					this.setState({
-						signType,
-						mobile : parse(document.cookie).username
-					});
-				}
-			}).fail(xhr => {
-				xhrTimeout("个人信息", store.getState().dialog.component);
-			});
-		};
-	}
-	componentDidMount(){
-		this.getAuth();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Main />
 				<Footer />
 			</div>

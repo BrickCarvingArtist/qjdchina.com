@@ -84,7 +84,6 @@ const Corp = "-仟金顶网络科技有限公司",
 						"/css/bill.css"
 					],
 					script : [
-						"/lib/react-date-picker@4.0.10.min.js",
 						"/lib/jquery.form@3.51.0.min.js",
 						"/js/bill.js"
 					],
@@ -102,7 +101,6 @@ const Corp = "-仟金顶网络科技有限公司",
 						"/css/contract.css"
 					],
 					script : [
-						"/lib/react-date-picker@4.0.10.min.js",
 						"/js/contract.js"
 					],
 					title : `我的合同${Corp}`,

@@ -1,12 +1,11 @@
 import React, {Component} from "react";
 import {createStore} from "redux";
-import {parse} from "cookie";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
 import InputRow from "../component/input";
-import {parse as _parse} from "querystring";
+import {parse} from "querystring";
 let store = createStore((state = [], action) => {
 	if(state[action.type]){
 		for(let i in action){
@@ -31,21 +30,27 @@ class Form extends Component{
 				imageCaptchaUrl : `/api/stream/captcha?t=${Date.now()}`
 			});
 		};
-		this.setDefaultMobile = () => {
+		this.setDefaultInfo = () => {
+			let search = parse(location.search.substr(1));
 			this.setState({
-				mobile : _parse(location.search.substr(1)).mobile
+				mobile : search.mobile,
+				code : search.code
 			});
 		};
+		this.getStrangeIptVal = name => {
+			return this.refs[name].value;
+		};
 		this.handleMessageCaptcha = () => {
+			let state = this.state;
 			this.state.enableMessage && $.ajax({
-				url : "/api/message/captcha",
+				url : "/api/message/contractcaptcha",
+				timeout : 2000,
 				data : {
-					source : "register",
-					imgCode : this.getStrangeIptVal("imageCaptcha"),
-					phone : this.getIptVal("phone")
+					code : state.code,
+					phone : state.mobile
 				}
 			}).done(data => {
-				if(!(data.code - 0)){
+				afterSign(data, data => {
 					let seconds = 60,
 						t = setInterval(() => {
 							if(--seconds){
@@ -61,27 +66,23 @@ class Form extends Component{
 								});
 							}
 						}, 1000);
-				}else{
-					dialog.setState({
-						option : {
-							title : {
-								iconClassName : "info",
-								name : "提示",
-								btnClose : 1
-							},
-							content : 0,
-							message : data.message
-						},
-						isShow : 1
-					});
-				}
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("验证码", dialog)
 			});
 		};
 		this.handleSign = () => {
+			let state = this.state;
 			$.ajax({
 				url : "/api/message/contract/validate",
 				timeout : 2000,
-				data : _parse(location.search.substr(1))
+				type : "post",
+				data : {
+					code : state.code,
+					mobile : state.mobile,
+					imgCode : this.getStrangeIptVal("imageCaptcha"),
+					smsCode : this.getStrangeIptVal("messageCaptcha")
+				}
 			}).done(data => {
 				afterSign(data, data => {
 					console.log(data);
@@ -93,7 +94,7 @@ class Form extends Component{
 	}
 	componentDidMount(){
 		this.handleImageCaptcha();
-		this.setDefaultMobile();
+		this.setDefaultInfo();
 	}
 	render(){
 		let lists = [],
@@ -181,36 +182,13 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
-		this.getAuth = () => {
-			$.ajax({
-				url : "/api/manage/corporation/info",
-				timeout : 2000
-			}).done(data => {
-				let signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
-				if(signType){
-					this.setState({
-						signType,
-						mobile : parse(document.cookie).username
-					});
-				}
-			}).fail(xhr => {
-				xhrTimeout("个人信息", store.getState().dialog.component);
-			});
-		};
-	}
-	componentDidMount(){
-		this.getAuth();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Main />
 				<Footer />
 			</div>

@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {createStore} from "redux";
-import {parse} from "cookie";
-import {parse as _parse} from "querystring";
+import {parse} from "querystring";
 import {afterSign, xhrTimeout} from "./util";
 import InputRow from "../component/input";
 import SelectGroup from "../component/select_group";
@@ -45,7 +44,11 @@ class Form extends Component{
 			return 0;
 		};
 		this.getArea = (provinceCode, cityCode, areaCode) => {
-			let arrProvince = [],
+			let areaConfig = this.state.areaConfig,
+				province = areaConfig[0],
+				city = areaConfig[1],
+				region = areaConfig[2],
+				arrProvince = [],
 				arrCity = [],
 				arrArea = [];
 			arrProvince[provinceCode] = province[provinceCode];
@@ -103,7 +106,7 @@ class Form extends Component{
 		let dialog = store.getState().dialog.component,
 			sup = [],
 			sub = [],
-			query = _parse(location.search.substr(1)),
+			query = parse(location.search.substr(1)),
 			option = {};
 		Object.keys(query).length === 5 && this.setState({
 			info : query,
@@ -122,7 +125,8 @@ class Form extends Component{
 		}, "area_config");
 		//查询品类
 		$.ajax({
-			url : "/api/user/supplier/category"
+			url : "/api/user/supplier/category",
+			timeout : 10000
 		}).done(data => {
 			afterSign(data, data => {
 				data.data.map((list, index) => {
@@ -169,7 +173,7 @@ class Form extends Component{
 							{list.label}
 						</label>
 						<SelectGroup id={list.id} default={info} option={
-							info ? this.getArea(info.provinceCode, info.cityCode, info.areaCode) : areaConfig
+							info && areaConfig.length ? this.getArea(info.provinceCode, info.cityCode, info.areaCode) : areaConfig
 						} checkType="region" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
 								this.setState({
@@ -256,34 +260,13 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
-		this.getAuth = () => {
-			$.ajax({
-				url : "/api/manage/corporation/info",
-				timeout : 2000
-			}).done(data => {
-				let signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
-				signType && this.setState({
-					signType,
-					mobile : parse(document.cookie).username
-				});
-			}).fail(xhr => {
-				xhrTimeout("个人信息", store.getState().dialog.component);
-			});
-		};
-	}
-	componentDidMount(){
-		this.getAuth();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Form />
 				<Footer />
 			</div>

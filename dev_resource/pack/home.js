@@ -1,12 +1,12 @@
 import React, {Component} from "react";
 import {createStore} from "redux";
 import {parse} from "cookie";
+import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import SignIn from "../component/signin";
 import InputRow from "../component/input";
 import Dialog from "../component/dialog";
-import {afterSign, xhrTimeout} from "./util";
 let store = createStore((state = [], action) => {
 	if(state[action.type]){
 		for(let i in action){
@@ -42,23 +42,30 @@ class Form extends Component{
 	constructor(props){
 		super(props);
 		this.state = props;
+		let dialog = store.getState().dialog.component,
+			header = store.getState().header.component;
 		this.getIptVal = name => {
 			return this.refs[name].refs.ipt.value;
 		};
-		let page;
 		this.handleSubmit = () => {
 			$.ajax({
 				type : "post",
 				url : "/api/user/signin",
+				timeout : 2000,
 				data : {
 					phone : this.getIptVal("phone"),
 					password : this.getIptVal("password")
 				},
 			}).done(data => {
 				afterSign(data, data => {
-					store.getState().page.component.getAuth();
-					location.href = "/manage/corporation";
-				}, store.getState().dialog.component);
+					header.setState({
+						signType : data.data.isMember ? 2 : 1
+					}, () => {
+						location.href = header.state.signType >> 1 ? "/manage/corporation" : "/user/join";
+					});
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("登录结果", dialog)
 			});
 		};
 	}
@@ -101,7 +108,8 @@ class Banner extends Component{
 	constructor(props){
 		super(props);
 		this.state = props;
-		let currentIndex,
+		let header = store.getState().header.component,
+			currentIndex,
 			sum;
 		this.slide = () => {
 			currentIndex = this.state.currentIndex;
@@ -114,17 +122,28 @@ class Banner extends Component{
 			setInterval(() => {
 				this.slide();
 			}, 4000);
-		}
+		};
+		this.subscribeHeader = () => {
+			let _subscriber = header.state.subscriber,
+				subscriber = [];
+			subscriber.push(this);
+			header.setState({
+				subscriber
+			});
+		};
+		this.getAuth = () => {
+			return header.state.signType;
+		};
 	}
 	componentDidMount(){
 		this.autoSlide();
+		this.subscribeHeader();
 	}
 	render(){
 		let lists = [],
 			state = this.state,
 			option = state.option,
-			currentIndex = state.currentIndex,
-			page = store.getState().page.component;
+			currentIndex = state.currentIndex;
 		option.map((list, index) => {
 			lists.push(
 				<Item option={list} status={index === currentIndex ? "current" : "normal"} key={index} />	
@@ -135,7 +154,7 @@ class Banner extends Component{
 				{lists}
 				<div className="w1000">
 					{
-						page.state.signType ? [] : <Form />
+						this.getAuth() ? [] : <Form />
 					}
 				</div>
 			</div>
@@ -308,36 +327,13 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
-		this.getAuth = () => {
-			$.ajax({
-				url : "/api/manage/corporation/info",
-				timeout : 2000
-			}).done(data => {
-				let signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
-				if(signType){
-					this.setState({
-						signType,
-						mobile : parse(document.cookie).username
-					});
-				}
-			}).fail(xhr => {
-				xhrTimeout("个人信息", store.getState().dialog.component);
-			});
-		};
-	}
-	componentDidMount(){
-		this.getAuth();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Banner />
 				<Static />
 				<Partner />

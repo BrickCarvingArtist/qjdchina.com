@@ -28,7 +28,7 @@ export default class InputRow extends Component{
 				</label>
 				<input 
 					id={option.id}
-					className={`${option.className}${state.value ? " disabled" : ""}`}
+					className={`${option.className}${state.value || state.value === null ? " disabled" : ""}`}
 					type={option.type}
 					placeholder={`请输入${option.label}`}
 					maxLength={option.maxlength}

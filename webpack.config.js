@@ -10,19 +10,13 @@ export default {
 		bill : `${entryPath}bill`,
 		contract : `${entryPath}contract`,
 		manufacturer : `${entryPath}manufacturer`,
-		messageentrance : `${entryPath}messageentrance`
+		messageentrance : `${entryPath}messageentrance`,
+		dependencies : ["react", "react-dom", "redux", "immutable"]
 	},
 	output : {
 		path : `${process.cwd()}/resource/`,
 		filename : "/js/[name].js",
 		chunkFilename : "/lib/[name].min.js"
-	},
-	externals : {
-		react : "React",
-		"react-dom" : "ReactDOM",
-		redux : "Redux",
-		immutable : "Immutable",
-		"react-date-picker" : "DatePicker"
 	},
 	module : {
 		loaders : [
@@ -49,6 +43,12 @@ export default {
 		]
 	},
 	plugins : [
+		new webpack.optimize.CommonsChunkPlugin("dependencies", "/lib/dependencies.min.js"),
+		new webpack.optimize.MinChunkSizePlugin({
+			compress : {
+				warnings: false
+			}
+		}),
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
 				warnings: false

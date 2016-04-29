@@ -45,7 +45,8 @@ class TopNav extends Component{
 					clearTimeout(t);
 					if(location.pathname === "/"){
 						this.setState({
-							option : 0
+							mobile : 0,
+							signType : 0
 						});
 					}else{
 						location.href = "/";
@@ -73,17 +74,22 @@ class TopNav extends Component{
 			});
 		};
 	}
+	componentDidMount(){
+		this.setState({
+			mobile : parse(document.cookie).username
+		});
+	}
 	componentWillReceiveProps(nextProps){
 		this.setState(nextProps);
 	}
 	render(){
 		let state = this.state,
-			mobile = state.option.mobile,
-			signType = state.option.signType >> 1;
+			mobile = state.mobile,
+			signType = state.signType >> 1;
 		return (
 			<div className="topNav">
 				<div className="w1000">
-					<a href="/aboutus">联系我们</a>
+					<a href="/introduction">联系我们</a>
 					{
 						mobile ? (
 							<div className="anchor" onClick={this.signOut}>退出</div>
@@ -180,15 +186,27 @@ class Header extends Component{
 	constructor(props){
 		super(props);
 		this.state = props;
+		this.state.store.dispatch({
+			type : "header",
+			component : this
+		});
 	}
-	componentWillReceiveProps(nextProps){
-		this.setState(nextProps);
+	componentDidMount(){
+		this.setState({
+			signType : parse(document.cookie).signtype
+		});
+	}
+	componentDidUpdate(){
+		let subscriber = this.state.subscriber;
+		subscriber && subscriber.map(list => {
+			list.forceUpdate();
+		});
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="header">
-				<TopNav store={state.store} option={state} />
+				<TopNav store={state.store} signType={state.signType} />
 				<MenuBar signType={state.signType} />
 			</div>
 		);

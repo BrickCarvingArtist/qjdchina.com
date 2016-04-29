@@ -1,7 +1,6 @@
 import React, {Component, createFactory} from "react";
 import {findDOMNode} from "react-dom";
-import {createStore} from "redux"
-import {parse} from "cookie";
+import {createStore} from "redux";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
@@ -485,21 +484,6 @@ class Main extends Component{
 					<Menu index={0} />
 					{
 						state.status ? (
-							<div className="content infoPart">
-								<h1>
-									{state.title}
-								</h1>
-								<a className={`auth ${state.authorized ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
-									<span>
-										{state.authorized ? "通过认证" : "授信资料未认证"}</span>
-									<br />
-									<span>
-										{state.authorized ? `信用额度${state.creditLimit}元` : "点击上传"}
-									</span>
-								</a>
-								{lists}
-							</div>
-						) : (
 							<div className="content authPart">
 								<Crumb option={
 									[
@@ -523,6 +507,21 @@ class Main extends Component{
 								<p>电话：400-826-582</p>
 								<p>邮编：310000</p>
 							</div>
+						) : (
+							<div className="content infoPart">
+								<h1>
+									{state.title}
+								</h1>
+								<a className={`auth ${state.authorized ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
+									<span>
+										{state.authorized ? "通过认证" : "授信资料未认证"}</span>
+									<br />
+									<span>
+										{state.authorized ? `信用额度${state.creditLimit}元` : "点击上传"}
+									</span>
+								</a>
+								{lists}
+							</div>
 						)
 					}
 				</div>
@@ -537,10 +536,6 @@ class Page extends Component{
 	constructor(){
 		super();
 		this.state = {};
-		store.dispatch({
-			type : "page",
-			component : this
-		});
 		this.getAuth = () => {
 			let areaConfig = this.state.areaConfig,
 				province = areaConfig[0],
@@ -553,10 +548,6 @@ class Page extends Component{
 				let _data = data.data,
 					signType = data.code === "101001002" ? 1 : !(data.code - 0) ? 2 : 0;
 				if(data.code === "101001002" || !(data.code - 0)){
-					this.setState({
-						signType,
-						mobile : parse(document.cookie).username
-					});
 					this.refs.main.setState({
 						title : _data.corpName,
 						info : [
@@ -613,7 +604,7 @@ class Page extends Component{
 		return (
 			<div className="page">
 				<Dialog store={store} />
-				<Header store={store} signType={state.signType} mobile={state.mobile} />
+				<Header store={store} />
 				<Main ref="main" />
 				<Footer />
 			</div>

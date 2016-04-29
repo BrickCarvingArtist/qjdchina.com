@@ -1,5 +1,5 @@
 import React, {createFactory} from "react";
-import {parse} from "cookie";
+import {parse} from "querystring";
 import SignIn from "../component/signin";
 const afterSign = (data, callback, dialog, path) => {
 	if(!(data.code - 0)){

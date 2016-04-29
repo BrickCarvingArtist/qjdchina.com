@@ -77,7 +77,7 @@ const BaseUrl = `http://${HostConfig.host}:${HostConfig.port}/`,
 				method : "get",
 				signType : [1, 2],
 				callback(req, res){
-					res.clearCookie("sso_cookie").clearCookie("JSESSIONID").json({
+					res.clearCookie("sso_cookie").clearCookie("JSESSIONID").clearCookie("username").clearCookie("corpname").clearCookie("signtype").json({
 						code : 403,
 						message : "期待下次您的下次登录"
 					});
@@ -214,6 +214,13 @@ const BaseUrl = `http://${HostConfig.host}:${HostConfig.port}/`,
 				callback : pureTransmit
 			},
 			{
+				from : "bill/condition",
+				to : `${BaseUrl}clms/front/order/orderStatus`,
+				method : "get",
+				signType : [2],
+				callback : pureTransmit
+			},
+			{
 				from : "bill/detail",
 				to : `${BaseUrl}clms/front/order/detail`,
 				method : "get",
@@ -285,7 +292,7 @@ const BaseUrl = `http://${HostConfig.host}:${HostConfig.port}/`,
 			},
 			{
 				from : "contract/accept",
-				to : `${BaseUrl}clms/front/contract/accept`,
+				to : `${BaseUrl}clms/front/contract/sign`,
 				method : "get",
 				signType : [2],
 				callback : pureTransmit
@@ -345,6 +352,13 @@ const BaseUrl = `http://${HostConfig.host}:${HostConfig.port}/`,
 				to : `${BaseUrl}cif/front/user/fetchSmsCode`,
 				method : "get",
 				signType : [0, 1, 2],
+				callback : pureTransmit
+			},
+			{
+				from : "contractcaptcha",
+				to : `${BaseUrl}clms/front/contract/sendSMSCode`,
+				method : "get",
+				signType : [2],
 				callback : pureTransmit
 			}
 		]
