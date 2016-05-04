@@ -17,7 +17,7 @@ const ServerConfig = {
 	},
 	UploadConfig = {
 		//Tip : 文件上传路径
-		path : "/srv/upload/cif_fnt"
+		path : "/srv/upload/cif_fnt/"
 	},
 	LogConfig = {
 		path : `${process.cwd()}/log/`

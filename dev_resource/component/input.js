@@ -24,7 +24,7 @@ export default class InputRow extends Component{
 		return (
 			<div className="row">
 				<label htmlFor={option.id}>
-					{option.label}
+					{`${option.label}:`}
 				</label>
 				<input 
 					id={option.id}

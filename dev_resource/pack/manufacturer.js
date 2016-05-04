@@ -426,14 +426,11 @@ class Content extends Component{
 	}
 }
 class Main extends Component{
-	constructor(){
-		super();
-	}
 	render(){
 		return (
 			<div className="mainArea">
 				<div className="w1000">
-					<Menu index={4} />
+					<Menu index={5} />
 					<Content />
 				</div>
 			</div>
@@ -441,12 +438,7 @@ class Main extends Component{
 	}
 }
 class Page extends Component{
-	constructor(){
-		super();
-		this.state = {};
-	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

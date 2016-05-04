@@ -79,7 +79,7 @@ class Form extends Component{
 			id,
 			name,
 			supplierId,
-			productId,
+			productCode,
 			categoryCode,
 			provinceCode,
 			cityCode,
@@ -175,7 +175,7 @@ class Form extends Component{
 			cityCode = this.getAddress(arrAddress, 1);
 			areaCode = this.getAddress(arrAddress, 2);
 			supplierId = state.manufacturer;
-			productId = state.product;
+			productCode = state.product;
 			categoryCode = state.category;
 			address = this.refs.street.value;
 			projectParty = this.getIptVal("projectParty");
@@ -192,7 +192,7 @@ class Form extends Component{
 					id,
 					name,
 					supplierId,
-					productId,
+					productCode,
 					categoryCode,
 					provinceCode,
 					cityCode,
@@ -202,7 +202,7 @@ class Form extends Component{
 					contractAmount,
 					loanAmount,
 					loanPeriod,
-					projectContractPath
+					projectContractPath,
 				}
 			}).done(data => {
 				afterSign(data, data => {
@@ -585,7 +585,9 @@ class Content extends Component{
 			option && option.length ? (
 				<div className="content normal">
 					<h1>我的项目</h1>
-					<a className="singleBtn" onClick={this.handleClick}>我要申请</a>
+					{
+						[]/*<a className="singleBtn" onClick={this.handleClick}>我要申请</a>*/
+					}
 					<Table option={this.state.option} />
 				</div>
 			) : (
@@ -608,12 +610,7 @@ class Main extends Component{
 	}
 }
 class Page extends Component{
-	constructor(){
-		super();
-		this.state = {};
-	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

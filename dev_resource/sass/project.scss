@@ -16,56 +16,6 @@ $icon34:url(../image/icon34.png);
 	cursor:pointer;
 }
 .mainArea{
-	.content{
-		position:relative;
-		float:left;
-		width:812px;
-		padding:0 20px 20px 12px;
-		overflow:hidden;
-		h1{
-			float:left;
-			margin-top:38px;
-			padding-bottom:30px;
-			width:100%;
-			border-bottom:1px solid $menuBd;
-			text-indent:18px;
-			font-size:24px;
-		}
-		table{
-			float:left;
-			margin-top:20px;
-			width:100%;
-			font-size:12px;
-			thead{
-				th{
-					height:30px;
-					text-align:center;
-					font-weight:normal;
-					line-height:30px;
-					background-color:$menuBd;
-					border:1px solid $menuBd;
-				}
-			}
-			tbody{
-				tr:nth-of-type(odd){
-					background-color:$menuBg;
-				}
-				tr:nth-of-type(even):hover{
-					background-color:$menuBd;
-				}
-				td{
-					padding:0 6px;
-					height:25px;
-					overflow:hidden;
-					white-space:nowrap;
-					text-overflow:ellipsis;
-					border:1px solid $menuBd;
-					text-align:center;
-					line-height:25px;
-				}
-			}
-		}
-	}
 	.normal{
 		.singleBtn{
 			position:absolute;
@@ -84,6 +34,9 @@ $icon34:url(../image/icon34.png);
 			content:"更多项目需求，请点击";
 			color:$bdGrey;
 			cursor:text;
+		}
+		table{
+			margin-top:20px;
 		}
 	}
 	.blank{

@@ -95,7 +95,7 @@ class Form extends Component{
 				}
 			}).done(data => {
 				afterSign(data, data => {
-					location.href = "/manage/corporation";
+					location.href = "/manage/corporation?step=1";
 				}, dialog);
 			}).fail(xhr => {
 				xhrTimeout("申请会员", dialog);
@@ -209,7 +209,7 @@ class Form extends Component{
 				<div className="w1000">
 					<h1>立刻申请仟金顶会员，尊享仟金顶优质服务</h1>
 					{lists}
-					<input className="singleBtn" type="button" value="提交申请" onClick={this.handleSubmit} />
+					<input className="singleBtn" type="button" value="提交申请,去上传资料" onClick={this.handleSubmit} />
 				</div>
 			</form>
 		);
@@ -257,12 +257,7 @@ Form.defaultProps = {
 	]
 };
 class Page extends Component{
-	constructor(){
-		super();
-		this.state = {};
-	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

@@ -1,6 +1,7 @@
 import React, {Component, createFactory} from "react";
 import {findDOMNode} from "react-dom";
 import {createStore} from "redux";
+import {parse} from "querystring";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
@@ -119,10 +120,7 @@ Progress.defaultProps = {
 class Tr extends Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			option : props.option,
-			index : props.index
-		};
+		this.state = props;
 		store.dispatch({
 			type : this.state.option.file_cate_code,
 			component : this
@@ -136,7 +134,9 @@ class Tr extends Component{
 						name : "文件上传",
 						btnClose : 1
 					},
-					content : createFactory(DialogContent)({}),
+					content : createFactory(DialogContent)({
+						upload : this.state.status
+					}),
 					message : 0
 				},
 				isShow : 1
@@ -153,8 +153,9 @@ class Tr extends Component{
 	}
 	render(){
 		let lists = [],
-			index = this.state.index,
-			option = this.state.option,
+			state = this.state,
+			index = state.index,
+			option = state.option,
 			arrUpload = option.uploads;
 		return (
 			<tr className={option.isUploadRequired - 0 ? "required" : "normal"}>
@@ -166,7 +167,7 @@ class Tr extends Component{
 				</td>
 				<td>
 					<span onClick={this.handleUpload}>
-						{arrUpload.length ? "编辑" : "上传"}
+						{state.status ? arrUpload.length ? "编辑" : "上传" : "查看"}
 					</span>
 				</td>
 			</tr>
@@ -177,9 +178,7 @@ class Tr extends Component{
 class Table extends Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			option : props.option
-		};
+		this.state = props;
 	}
 	componentWillReceiveProps(nextProps){
 		this.setState(nextProps);
@@ -187,10 +186,14 @@ class Table extends Component{
 	render(){
 		let lists = [],
 			title = this.props.title,
-			option = this.state.option;
-		option.map((list, index) => {
+			state = this.state,
+			step = state.step,
+			option = state.option;
+		(step ? option : option.filter(list => {
+			return list.uploads.length;
+		})).map((list, index) => {
 			lists.push(
-				<Tr key={index} option={list} index={index + 1} />
+				<Tr key={index} option={list} index={index + 1} status={step} />
 			);
 		});
 		return (
@@ -283,11 +286,19 @@ class Form extends Component{
 			xhrTimeout("认证资料列表", dialog);
 		});
 	}
+	componentWillReceiveProps(nextProps){
+		this.setState(nextProps);
+	}
 	render(){
+		let step = this.state.step;
 		return (
 			<form className="frmAuth">
-				<Table option={this.state.option} />
-				<input className="singleBtn" type="button" value="提交审核" onClick={this.handleSubmit} />
+				<Table option={this.state.option} step={step} />
+				{
+					step ? (
+						<input className="singleBtn" type="button" value="提交审核" onClick={this.handleSubmit} />
+					) : []
+				}
 			</form>
 		);
 	}
@@ -333,7 +344,7 @@ class File extends Component{
 		return (
 			<li>
 				<a href={`/api/stream/authfile?fileUploadId=${fileId}`} target="_blank">{`文件${index + 1}`}</a>
-				<i className="del" onClick={this.handleDelete}></i>
+				{/*<i className="del" onClick={this.handleDelete}></i>*/}
 			</li>
 		);
 	}
@@ -362,9 +373,9 @@ class Files extends Component{
 	}
 }
 class DialogContent extends Component{
-	constructor(){
-		super();
-		this.state = {};
+	constructor(props){
+		super(props);
+		this.state = props;
 		let dialog = store.getState().dialog.component;
 		store.dispatch({
 			type : "dialogContent",
@@ -411,13 +422,20 @@ class DialogContent extends Component{
 			});
 		};
 	}
+	componentWillReceiveProps(nextProps){
+		this.setState(nextProps);
+	}
 	render(){
 		return (
 			<form className="content">
 				<Files option={this.state.option} code={this.state.code} />
-				<div className="singleBtn">
-					<input type="file" multiple="multiple" name="upload" onChange={this.handleUpload} />
-				</div>
+				{
+					this.state.status ? (
+						<div className="singleBtn">
+							<input type="file" multiple="multiple" name="upload" onChange={this.handleUpload} />
+						</div>
+					) : []
+				}
 			</form>
 		);
 	}
@@ -434,20 +452,26 @@ class Main extends Component{
 	}
 	componentDidMount(){
 		let dialog = store.getState().dialog.component;
-		$.ajax({
-			url : "/api/manage/getcredit",
-			timeout : 2000
-		}).done(data => {
-			afterSign(data, data => {
-				let _data = data.data;
-				this.setState({
-					authorized : _data.status === "DONE",
-					creditLimit : _data.creditLine
-				});
-			}, dialog);
-		}).fail(xhr => {
-			xhrTimeout("授信额度", dialog);
-		});
+		if(parse(location.search.slice(1)).step){
+			this.setState({
+				status : 1
+			});
+		}else{
+			$.ajax({
+				url : "/api/manage/getcredit",
+				timeout : 2000
+			}).done(data => {
+				afterSign(data, data => {
+					let _data = data.data;
+					this.setState({
+						authorized : _data.status === "DONE",
+						creditLimit : _data.creditLine
+					});
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("授信额度", dialog);
+			});
+		}
 	}
 	render(){
 		let lists = [],
@@ -500,9 +524,7 @@ class Main extends Component{
 									{this.state.title}
 								</h1>
 								<Progress userClass={this} />
-								{
-									this.state.step ? <Form /> : []
-								}
+								<Form step={state.step} />
 								<p>地址：杭州市滨江区秋溢路289号5楼</p>
 								<p>电话：400-826-582</p>
 								<p>邮编：310000</p>
@@ -600,7 +622,6 @@ class Page extends Component{
 		}, "area_config");
 	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

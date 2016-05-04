@@ -14,20 +14,6 @@ $progressIcon:url(../image/progressicon.png);
 	cursor:pointer;
 }
 .mainArea{
-	.content{
-		float:left;
-		width:812px;
-		padding:0 20px 20px 12px;
-		overflow:hidden;
-		h1{
-			float:left;
-			padding-bottom:30px;
-			width:100%;
-			border-bottom:1px solid $menuBd;
-			text-indent:18px;
-			font-size:24px;
-		}
-	}
 	.infoPart{
 		position:relative;
 		h1{
@@ -264,6 +250,10 @@ $progressIcon:url(../image/progressicon.png);
 			}
 		}
 		.frmAuth{
+			float:left;
+			margin-bottom:20px;
+			width:100%;
+			overflow:hidden;
 			table{
 				width:100%;
 				font-size:12px;
@@ -325,7 +315,7 @@ $progressIcon:url(../image/progressicon.png);
 				}
 			}
 			.singleBtn{
-				margin:20px 346px;
+				margin:20px 346px 0;
 			}
 		}
 	}

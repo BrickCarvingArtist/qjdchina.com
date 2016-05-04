@@ -4,6 +4,7 @@
 @import "./component/footer";
 $menuBgImg:url(../image/menubg.png);
 $menuIcon:url(../image/menuicon.png);
+$icon80:url(../image/icon80.png);
 body{
 	background-color:$bgGrey;
 }
@@ -97,44 +98,199 @@ body{
 				background-position:center -90px;
 			}
 		}
-		.contract.normal{
+		.loan.normal{
 			i{
 				background-position:center -135px;
 			}
 		}
-		.manufacturer.normal{
+		.contract.normal{
 			i{
 				background-position:center -180px;
 			}
 		}
-		.corporation.current{
+		.manufacturer.normal{
 			i{
 				background-position:center -225px;
 			}
 		}
-		.project.current{
+		.corporation.current{
 			i{
 				background-position:center -270px;
 			}
 		}
-		.bill.current{
+		.project.current{
 			i{
 				background-position:center -315px;
 			}
 		}
-		.contract.current{
+		.bill.current{
 			i{
 				background-position:center -360px;
 			}
 		}
-		.manufacturer.current{
+		.loan.current{
 			i{
 				background-position:center -405px;
 			}
 		}
+		.contract.current{
+			i{
+				background-position:center -450px;
+			}
+		}
+		.manufacturer.current{
+			i{
+				background-position:center -495px;
+			}
+		}
 	}
 	.content{
-		min-height:510px;
+		position:relative;
+		float:left;
+		width:812px;
+		min-height:612px;
+		padding:0 20px 20px 12px;
+		overflow:hidden;
+		h1{
+			float:left;
+			margin-top:38px;
+			padding-bottom:30px;
+			width:100%;
+			border-bottom:1px solid $menuBd;
+			text-indent:18px;
+			font-size:24px;
+		}
+		.filter{
+			position:relative;
+			float:left;
+			width:100%;
+			z-index:1;
+			label, .selectGroup, .dateText{
+				margin-bottom:15px;
+			}
+			label{
+				float:left;
+				width:80px;
+				text-align:center;
+				font-size:14px;
+				line-height:35px;
+			}
+			.selectGroup{
+				float:left;
+				width:180px;
+				display:flex;
+				select{
+					float:left;
+					flex:1;
+					width:100%;
+					height:35px;
+					border:1px solid $bdGrey;
+					font-size:14px;
+					line-height:35px;
+				}
+			}
+			.ipt-txt{
+				float:left;
+				width:180px;
+				height:35px;
+				border:1px solid $bdGrey;
+				text-indent:7px;
+				line-height:35px;
+				font-size:14px;
+			}
+			.date-picker{
+				position:absolute;
+				top:34px;
+				width:261px;
+				height:280px;
+			}
+			.date-picker.off{
+				display:none;
+			}
+			.date-picker.start{
+				left:80px;
+			}
+			.date-picker.end{
+				left:259px;
+			}
+			.option{
+				float:left;
+				width:100%;
+				text-align:center;
+				.singleBtn{
+					display:inline-block;
+					width:180px;
+					background-color:$qjdGreen;
+					font-size:14px;
+					color:white;
+				}
+			}
+		}
+		table{
+			float:left;
+			width:100%;
+			font-size:12px;
+			thead{
+				th{
+					height:30px;
+					text-align:center;
+					font-weight:normal;
+					line-height:30px;
+					background-color:$menuBd;
+					border:1px solid $menuBd;
+				}
+			}
+			tbody{
+				tr:nth-of-type(odd){
+					background-color:$menuBg;
+				}
+				tr:nth-of-type(even):hover{
+					background-color:$menuBd;
+				}
+				.normal{
+					color:$darkGrey;
+				}
+				.delay{
+					color:$red;
+				}
+				td{
+					padding:0 6px;
+					border:1px solid $menuBd;
+					line-height:25px;
+					text-align:center;
+					vertical-align:middle;
+					div{
+						width:120px;
+						text-align:left;
+						word-break:break-all;
+					}
+					a{
+						color:$qjdGreen;
+						cursor:pointer;
+					}
+				}
+			}
+		}
+	}
+	.blank{
+		position:relative;
+		.noData{
+			margin:0 auto;
+			height:280px;
+			background-image:$icon80;
+			background-position:50% 80px;
+			background-repeat:no-repeat;
+		}
+		.noData:after{
+			position:absolute;
+			top:195px;
+			left:0;
+			width:100%;
+			text-align:center;
+			font-size:14px;
+			color:black;
+			content:"抱歉，没有搜到您要的信息！";
+		}
 	}
 }
 .footer{

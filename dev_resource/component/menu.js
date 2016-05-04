@@ -50,6 +50,11 @@ Menu.defaultProps = {
 			href : "/manage/bill"
 		},
 		{
+			name : "我的放款",
+			className : "loan",
+			href : "/manage/loan"
+		},
+		{
 			name : "我的合同",
 			className : "contract",
 			href : "/manage/contract"

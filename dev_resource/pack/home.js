@@ -124,8 +124,7 @@ class Banner extends Component{
 			}, 4000);
 		};
 		this.subscribeHeader = () => {
-			let _subscriber = header.state.subscriber,
-				subscriber = [];
+			let subscriber = header.state.subscriber || [];
 			subscriber.push(this);
 			header.setState({
 				subscriber
@@ -324,12 +323,7 @@ Manufacturer.defaultProps = {
 	]
 };
 class Page extends Component{
-	constructor(){
-		super();
-		this.state = {};
-	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

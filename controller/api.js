@@ -270,6 +270,20 @@ const BaseUrl = `http://${HostConfig.host}:${HostConfig.port}/`,
 				callback : pureTransmit
 			},
 			{
+				from : "loan/list",
+				to : `${BaseUrl}clms/front/loansBill/list`,
+				method : "get",
+				signType : [2],
+				callback : pureTransmit
+			},
+			{
+				from : "loan/condition",
+				to : `${BaseUrl}clms/front/loansBill/loansBillStatus`,
+				method : "get",
+				signType : [2],
+				callback : pureTransmit
+			},
+			{
 				from : "contract/list",
 				to : `${BaseUrl}clms/front/contract/list`,
 				method : "get",

@@ -1,12 +1,13 @@
 import React, {Component, createFactory} from "react";
 import {createStore} from "redux";
+import {stringify} from "qs";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
 import Menu from "../component/menu";
 import SelectGroup from "../component/select_group";
-import {stringify} from "qs";
+import InputRow from "../component/input";
 let store = createStore((state = [], action) => {
 	if(state[action.type]){
 		for(let i in action){
@@ -277,6 +278,9 @@ class Filter extends Component{
 		this.getSign = () => {
 			return [, "我方未签", "我方已签"];
 		};
+		this.getIptVal = name => {
+			return this.refs[name].refs.ipt.value;
+		};
 		let dateStart,
 			dateEnd;
 		this.toggleStart = () => {
@@ -307,10 +311,12 @@ class Filter extends Component{
 				dateEnd : 0
 			});
 		};
+		let projectName;
 		this.handleSearch = () => {
 			let state = this.state;
+			projectName = this.getIptVal("projectName");
 			store.getState().table.component.getData({
-				projectId : state.project,
+				projectName : projectName ? encodeURI(projectName) : undefined,
 				type : state.type,
 				status : state.status,
 				isSign : state.isSign,
@@ -327,22 +333,22 @@ class Filter extends Component{
 				datePicker
 			});
 		}, "datepicker");
-		$.ajax({
-			url : "/api/manage/project/list",
-			timeout : 2000
-		}).done(data => {
-			afterSign(data, data => {
-				let project = [];
-				data.data.map(list => {
-					project[list.code] = list.name;
-				});
-				this.setState({
-					arrProject : project
-				});
-			}, dialog);
-		}).fail(xhr => {
-			xhrTimeout("项目类别", dialog);
-		});
+		// $.ajax({
+		// 	url : "/api/manage/project/list",
+		// 	timeout : 2000
+		// }).done(data => {
+		// 	afterSign(data, data => {
+		// 		let project = [];
+		// 		data.data.map(list => {
+		// 			project[list.code] = list.name;
+		// 		});
+		// 		this.setState({
+		// 			arrProject : project
+		// 		});
+		// 	}, dialog);
+		// }).fail(xhr => {
+		// 	xhrTimeout("项目列表", dialog);
+		// });
 		$.ajax({
 			url : "/api/manage/contract/condition",
 			timeout : 2000
@@ -372,30 +378,10 @@ class Filter extends Component{
 			endDate = state.endDate;
 		return (
 			<div className="filter">
-				<label htmlFor="project">项目:</label>
-				<SelectGroup id="project" option={
-					[this.getProject()]
-				} checkType="single" callback={
-					(completeStatus, selectIndex) => {
-						completeStatus && this.setState({
-							project : selectIndex[0]
-						});
-					}
-				} />
-				<label htmlFor="type">类型:</label>
-				<SelectGroup id="type" option={
-					[this.getType()]
-				} checkType="single" callback={
-					(completeStatus, selectIndex) => {
-						completeStatus && this.setState({
-							type : selectIndex[0]
-						});
-					}
-				} />
-				<label>时间:</label>
-				<input className="dateText" placeholder="请选择起始日" readOnly="readOnly" onClick={this.toggleStart} value={this.state.startDate} />
-				<label>至:</label>
-				<input className="dateText" placeholder="请选择终止日" readOnly="readOnly" onClick={this.toggleEnd} value={this.state.endDate} />
+				<label>开始日期:</label>
+				<input className="ipt-txt" placeholder="请选择开始日期" readOnly="readOnly" onClick={this.toggleStart} value={this.state.startDate} />
+				<label>截止日期:</label>
+				<input className="ipt-txt" placeholder="请选择截止日期" readOnly="readOnly" onClick={this.toggleEnd} value={this.state.endDate} />
 				{
 					DatePicker ?
 						<DatePicker
@@ -409,16 +395,6 @@ class Filter extends Component{
 							gotoSelectedText="选中日"
 							onChange={this[`getDate${isStart ? "Start" : "End"}`]} /> : []
 				}
-				<label htmlFor="status">状态:</label>
-				<SelectGroup id="status" option={
-					[this.getStatus()]
-				} checkType="single" callback={
-					(completeStatus, selectIndex) => {
-						completeStatus && this.setState({
-							status : selectIndex[0]
-						});
-					}
-				} />
 				<label htmlFor="isSign">我方签约:</label>
 				<SelectGroup id="isSign" option={
 					[this.getSign()]
@@ -429,7 +405,35 @@ class Filter extends Component{
 						});
 					}
 				} />
-				<a className="singleBtn" onClick={this.handleSearch}>查询</a>
+				<InputRow option={
+					{
+						label : "项目名称",
+						className : "ipt-txt"
+					}
+				} ref="projectName" />
+				<label htmlFor="type">合同类型:</label>
+				<SelectGroup id="type" option={
+					[this.getType()]
+				} checkType="single" callback={
+					(completeStatus, selectIndex) => {
+						completeStatus && this.setState({
+							type : selectIndex[0]
+						});
+					}
+				} />
+				<label htmlFor="status">合同状态:</label>
+				<SelectGroup id="status" option={
+					[this.getStatus()]
+				} checkType="single" callback={
+					(completeStatus, selectIndex) => {
+						completeStatus && this.setState({
+							status : selectIndex[0]
+						});
+					}
+				} />
+				<div className="option">
+					<a className="singleBtn" onClick={this.handleSearch}>查询</a>
+				</div>
 			</div>
 		);
 	}
@@ -477,11 +481,18 @@ class Tr extends Component{
 									this.getIsFailed(option) ? "查看" : "签约"
 								}
 							</a>
-						) : i === "status" ? (
-							this.getStatus()
-						) : i === "type" ? (
-							this.getType()
-						) :option[i]
+						) : 
+							i === "status" ? (
+								this.getStatus()
+							) : 
+								i === "type" ? (
+									this.getType()
+								) : 
+									i === "code" || i === "projectName" ? (
+											<div>
+												{option[i]}
+											</div>
+										) : option[i]
 					}
 				</td>
 			);
@@ -523,11 +534,7 @@ class Table extends Component{
 		this.getOption = object => {
 			let option = [];
 			for(let i in this.state.title){
-				if(~i.search(/time/ig)){
-					option[i] = object[i].split(/\s/)[0];
-				}else{
-					option[i] = object[i];
-				}
+				option[i] = object[i];
 			}
 			return option;
 		};
@@ -580,7 +587,7 @@ Table.defaultProps = {
 		code : "合同号",
 		type : "合同类型",
 		projectName : "项目名称",
-		signTime : "时间",
+		gmtCreated : "时间",
 		status : "状态",
 		isSign : "操作"
 	},
@@ -603,7 +610,7 @@ class Content extends Component{
 	}
 	render(){
 		return (
-			<div className="content list">
+			<div className="content">
 				<h1>我的合同</h1>
 				<Filter />
 				<Table />
@@ -621,7 +628,7 @@ class Main extends Component{
 		return (
 			<div className="mainArea">
 				<div className="w1000">
-					<Menu index={3} />
+					<Menu index={4} />
 					{
 						state.status ? <Contract /> : <Content userClass={this} />
 					}
@@ -631,12 +638,7 @@ class Main extends Component{
 	}
 }
 class Page extends Component{
-	constructor(){
-		super();
-		this.state = {};
-	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

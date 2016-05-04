@@ -382,15 +382,23 @@ class Filter extends Component{
 		this.getProject = () => {
 			return this.state.arrProject || [];
 		};
+		this.getManufacturer = () => {
+			return this.state.arrManufacturer || [];
+		};
 		this.getStatus = subscriber => {
 			status = [];
 			(this.state.arrStatus || []).map(list => {
 				status[list.value] = list.label;
 			});
-			subscriber && this.setState({
-				subscriber
-			});
+			if(subscriber){
+				let arrSubscriber = this.subscriber || [];
+				arrSubscriber.push(subscriber);//cannot derepeat, memory leak!!!
+				this.subscriber = arrSubscriber;
+			}
 			return status;
+		};
+		this.getIptVal = name => {
+			return this.refs[name].refs.ipt.value;
 		};
 		let dateStart,
 			dateEnd;
@@ -422,10 +430,13 @@ class Filter extends Component{
 				dateEnd : 0
 			});
 		};
+		let projectName;
 		this.handleSearch = () => {
 			state = this.state;
+			projectName = this.getIptVal("projectName");
 			this.state.userClass.getData({
-				projectCode : state.project,
+				projectName : projectName ? encodeURI(projectName) : undefined,
+				supplierId : state.manufacturer,
 				status : state.state,
 				startDate : state.startDate,
 				endDate : state.endDate
@@ -448,24 +459,42 @@ class Filter extends Component{
 				this.setState({
 					arrStatus : data.data.statusItem
 				}, () => {
-					let subscriber = this.state.subscriber;
-					subscriber && subscriber.forceUpdate();
+					let subscriber = this.subscriber;
+					subscriber && subscriber.map(list => {
+						list.forceUpdate();
+					});
 				});
 			}, dialog);
 		}).fail(xhr => {
 			xhrTimeout("订单查询条件", dialog);
 		});
+		// $.ajax({
+		// 	url : "/api/manage/project/list",
+		// 	timeout : 2000
+		// }).done(data => {
+		// 	afterSign(data, data => {
+		// 		let project = [];
+		// 		data.data.map(list => {
+		// 			project[list.code] = list.name;
+		// 		});
+		// 		this.setState({
+		// 			arrProject : project
+		// 		});
+		// 	}, dialog);
+		// }).fail(xhr => {
+		// 	xhrTimeout("项目列表", dialog);
+		// });
 		$.ajax({
-			url : "/api/manage/project/list",
+			url : "/api/manage/project/manufacturer",
 			timeout : 2000
 		}).done(data => {
 			afterSign(data, data => {
-				let project = [];
+				let manufacturer = [];
 				data.data.map(list => {
-					project[list.code] = list.name;
+					manufacturer[list.supplierId] = list.supplierName;
 				});
 				this.setState({
-					arrProject : project
+					arrManufacturer : manufacturer
 				});
 			}, dialog);
 		}).fail(xhr => {
@@ -481,30 +510,10 @@ class Filter extends Component{
 			endDate = state.endDate;
 		return (
 			<div className="filter">
-				<label htmlFor="project">项目:</label>
-				<SelectGroup id="project" option={
-					[this.getProject()]
-				} checkType="single" callback={
-					(completeStatus, selectIndex) => {
-						completeStatus && this.setState({
-							project : selectIndex[0]
-						});
-					}
-				} />
-				<label htmlFor="state">状态:</label>
-				<SelectGroup id="state" option={
-					[this.getStatus()]
-				} checkType="single" callback={
-					(completeStatus, selectIndex) => {
-						completeStatus && this.setState({
-							state : selectIndex[0]
-						});
-					}
-				} />
-				<label>时间:</label>
-				<input className="dateText" placeholder="请选择起始日" readOnly="readOnly" onClick={this.toggleStart} value={this.state.startDate} />
-				<label>至:</label>
-				<input className="dateText" placeholder="请选择终止日" readOnly="readOnly" onClick={this.toggleEnd} value={this.state.endDate} />
+				<label>开始日期:</label>
+				<input className="ipt-txt" placeholder="请选择开始日期" readOnly="readOnly" onClick={this.toggleStart} value={this.state.startDate} />
+				<label>截止日期:</label>
+				<input className="ipt-txt" placeholder="请选择截止日期" readOnly="readOnly" onClick={this.toggleEnd} value={this.state.endDate} />
 				{
 					DatePicker ?
 						<DatePicker
@@ -518,7 +527,35 @@ class Filter extends Component{
 							gotoSelectedText="选中日"
 							onChange={this[`getDate${isStart ? "Start" : "End"}`]} /> : []
 				}
-				<a className="singleBtn" onClick={this.handleSearch}>查询</a>
+				<label htmlFor="manufacturer">合作厂家:</label>
+				<SelectGroup id="manufacturer" option={
+					[this.getManufacturer()]
+				} checkType="single" callback={
+					(completeStatus, selectIndex) => {
+						completeStatus && this.setState({
+							manufacturer : selectIndex[0]
+						});
+					}
+				} />
+				<InputRow option={
+					{
+						label : "项目名称",
+						className : "ipt-txt"
+					}
+				} ref="projectName" />
+				<label htmlFor="state">项目状态:</label>
+				<SelectGroup id="state" option={
+					[this.getStatus()]
+				} checkType="single" callback={
+					(completeStatus, selectIndex) => {
+						completeStatus && this.setState({
+							state : selectIndex[0]
+						});
+					}
+				} />
+				<div className="option">
+					<a className="singleBtn" onClick={this.handleSearch}>查询</a>
+				</div>
 			</div>
 		);
 	}
@@ -531,9 +568,7 @@ class Tr extends Component{
 			return store.getState().filter.component.getStatus(this)[status];
 		};
 		this.handleStatus = () => {
-			store.getState().content.component.setState(this.getType() ? {
-				loan : 1
-			} : {
+			store.getState().content.component.setState({
 				progress : 1
 			});
 		};
@@ -574,16 +609,17 @@ class Tr extends Component{
 				<td key={i}>
 					{
 						option[i] !== undefined ?
-							i === "projectName" ? 
-								`${option[i]}` :
-									i === "status" ? (
-										<span className="btnProgress" onClick={this.handleStatus}>
-											{this.getStatusName(option[i])}
-										</span>
-									) : 
-										`${option[i]}${i === "purchaseAmount" || i === "doneAmount" ? "元" : ""}` : (
-											<a className="btnFile" onClick={this.handleFile}>文件</a>
-										)
+							i === "status" ? (
+								<span className="btnProgress" onClick={this.handleStatus}>
+									{this.getStatusName(option[i])}
+								</span>
+							) : 
+								i === "orderCode" || i === "projectName" ? (
+									<div>{option[i]}</div>
+								) :
+									`${option[i]}${i === "purchaseAmount" || i === "doneAmount" ? "元" : ""}` : (
+										<a className="btnFile" onClick={this.handleFile}>文件</a>
+									)
 					}
 				</td>
 			);
@@ -753,164 +789,6 @@ Progress.defaultProps = {
 		}
 	]
 };
-class Loan extends Component{
-	constructor(props){
-		super(props);
-		this.state = props;
-		store.dispatch({
-			type : "loan",
-			component : this
-		});
-		this.dateFormat = object => {
-			for(let i in object){
-				if(~i.search(/date/ig)){
-					object[i] = object[i].split(/\s/)[0];
-				}else{
-					object[i] = object[i] || "0";
-				}
-			}
-		};
-	}
-	componentDidMount(){
-		$.ajax({
-			url : "/api/manage/bill/plan",
-			data : {
-				loanCode : parse(location.search.slice(1)).loanCode
-			}
-		}).done(data => {
-			afterSign(data, data => {
-				let dataCollection = data.data,
-					_data;
-				for(let i in dataCollection){
-					_data = dataCollection[i];
-					if(_data instanceof Array){
-						_data.map((list, index) => {
-							if(i === "refundDetailVOList"){
-								list.index = index + 1;
-							}
-							this.dateFormat(list);
-						});
-					}else{
-						_data instanceof Object && this.dateFormat(_data);
-					}
-				}
-				this.setState({
-					projectName : dataCollection.projectName,
-					orderCode : dataCollection.orderCode,
-					detail : dataCollection.refundSummaryVO,
-					planList : dataCollection.refundPlanVOList,
-					refundList : dataCollection.refundDetailVOList
-				});
-			});
-		});
-	}
-	render(){
-		let state = this.state;
-		return (
-			<div className="loan">
-				<div className="title">
-					<h2>
-						{`项目名称:${state.projectName}`}
-					</h2>
-					<p>
-						{`订单号:${state.orderCode}`}
-					</p>
-					<i className="tel"></i>
-				</div>
-				<ul className="iconInfo">
-					<li>
-						<i className="lock"></i>
-						<span>待付贷款</span>
-						<span>
-							{state.detail ? `${state.detail.principalRemain}元` : ""}
-						</span>
-					</li>
-					<li>
-						<i className="card"></i>
-						<span>计费方式</span>
-						<span>按月付费，到期付款</span>
-					</li>
-					<li>
-						<i className="calendar"></i>
-						<span>起止时间</span>
-						<span>
-							{
-								state.detail ? `${state.detail.loanInfoStartDate}至${state.detail.loanInfoEndDate}` : ""
-							}
-						</span>
-					</li>
-				</ul>
-				<ul className="bigFontInfo">
-					{
-						state.detail && state.detail.minRepayAmount - 0 ?
-						(
-							<li className="overdue">
-								<p>
-									<span>逾期应付总额</span>
-									<strong>
-										{state.detail ? state.detail.minRepayAmount : ""}
-									</strong>
-									<span>元</span>
-								</p>
-								<p>您已逾期，请于今日付款至仟金顶账户，并致电结算中心。</p>
-							</li>
-						) : []
-					}
-					<li>
-						<p>
-							<span>本期应付总额</span>
-							<strong>
-								{state.detail ? state.detail.currentTotalRepay : ""}
-							</strong>
-							<span>元</span>
-						</p>
-						<p>
-							{
-								`本期应付总额不包括逾期应付总额。请于${state.detail ? state.detail.currentRepayDate : ""}之前付款到仟金顶账户。`
-							}
-						</p>
-					</li>
-					<li>
-						<p>
-							<span>全部应付总额</span>
-							<strong>
-								{state.detail ? state.detail.maxRepayAmount : ""}
-							</strong>
-							<span>元</span>
-						</p>
-						<p>如需全额还款，请于今日付款至仟金顶账户，并致电结算中心。</p>
-					</li>
-				</ul>
-				<h3>付款计划表</h3>
-				<Table title={
-					{
-						agingNo : "期数",
-						repaymentDate : "还款日",
-						interestExprected : "预期服务费",//wrong spelling!!!
-						overdueFineReceivable : "应付罚款",
-						principalReceivable : "应付货款",
-						interestReceivable : "应付服务费",
-						totalReceivable : "应付总额"
-					}
-				} option={state.planList} color={1} />
-				<p className="note">置灰:未到期,置红:到期未还,置黑:到期已还。</p>
-				<h3>付款明细</h3>
-				<Table title={
-					{
-						index : "编号",
-						repayDate : "付款日",
-						penalty : "已付违约金",
-						overdueFine : "已付罚款",
-						interest : "已付服务费",
-						loanInfoId : "已付货款",
-						otherExpenses : "已付其他费用",
-						totalRepay : "付款总额"
-					}
-				} option={state.refundList} />
-			</div>
-		);
-	}
-}
 class Content extends Component{
 	constructor(){
 		super();
@@ -964,42 +842,28 @@ class Content extends Component{
 		};
 	}
 	componentDidMount(){
-		let loanCode = parse(location.search.slice(1)).loanCode;
-		if(loanCode){
-			this.setState({
-				option : 1,
-				loan : 1
-			});
-		}else{
-			this.getData();
-		}
+		this.getData();
 	}
 	render(){
 		let state = this.state,
 			status = state.status,
 			option = state.option,
-			progress = state.progress,
-			loan = state.loan;
+			progress = state.progress;
 		return status ? (
 				<Form bill={state.bill} />
-			) :
-			option ? (
+			) : (
 				<div className="content normal">
+					<h1>我的订单</h1>
 					{
-						loan ? [] :<h1>我的订单</h1>
+						[]/*<a className="singleBtn" onClick={this.handleClick}>我要申请</a>*/
 					}
 					{
-						[]/*loan ? [] : <a className="singleBtn" onClick={this.handleClick}>我要申请</a>*/
+						progress ? <Progress /> : <Filter userClass={this} />
 					}
 					{
-						progress ? <Progress /> : loan ? <Loan /> : <Filter userClass={this} />
-					}
-					{
-						progress || loan ? [] : <Table option={option} />
+						progress ? [] : <Table option={option} />
 					}
 				</div>
-			) : (
-				<div className="content blank"></div>
 			);
 	}
 }
@@ -1016,12 +880,7 @@ class Main extends Component{
 	}
 }
 class Page extends Component{
-	constructor(){
-		super();
-		this.state = {};
-	}
 	render(){
-		let state = this.state;
 		return (
 			<div className="page">
 				<Dialog store={store} />

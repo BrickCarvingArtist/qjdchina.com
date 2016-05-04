@@ -9,6 +9,7 @@ export default {
 		project : `${entryPath}project`,
 		bill : `${entryPath}bill`,
 		contract : `${entryPath}contract`,
+		loan : `${entryPath}loan`,
 		manufacturer : `${entryPath}manufacturer`,
 		messageentrance : `${entryPath}messageentrance`,
 		dependencies : ["react", "react-dom", "redux", "immutable"]
