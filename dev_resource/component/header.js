@@ -13,7 +13,8 @@ class TopNav extends Component{
 		});
 		let dialog,
 			path,
-			t;
+			t,
+			userClass;
 		this.signIn = () => {
 			dialog = this.state.store.getState().dialog.component;
 			dialog.setState({
@@ -36,17 +37,23 @@ class TopNav extends Component{
 		};
 		this.signOut = () => {
 			dialog =  this.state.store.getState().dialog.component;
+			userClass = this.state.userClass;
 			$.ajax({
 				url : "/api/user/signout",
 				timeout : 2000
 			}).done(data => {
-				afterSign(data, data=>{}, dialog);
+				afterSign(data, data => {}, dialog);
 				t = setTimeout(() => {
 					clearTimeout(t);
 					if(location.pathname === "/"){
 						this.setState({
-							mobile : 0,
-							signType : 0
+							mobile : 0
+						}, () => {
+							userClass.setState({
+								signType : 0
+							}, () => {
+								userClass.updateSubscribers();
+							});
 						});
 					}else{
 						location.href = "/";
@@ -190,6 +197,12 @@ class Header extends Component{
 			type : "header",
 			component : this
 		});
+		this.updateSubscribers = () => {
+			let subscriber = this.state.subscriber;
+			subscriber && subscriber.map(list => {
+				list.forceUpdate();
+			});
+		};
 	}
 	componentDidMount(){
 		this.setState({
@@ -197,16 +210,13 @@ class Header extends Component{
 		});
 	}
 	componentDidUpdate(){
-		let subscriber = this.state.subscriber;
-		subscriber && subscriber.map(list => {
-			list.forceUpdate();
-		});
+		this.updateSubscribers();
 	}
 	render(){
 		let state = this.state;
 		return (
 			<div className="header">
-				<TopNav store={state.store} signType={state.signType} />
+				<TopNav store={state.store} signType={state.signType} userClass={this} />
 				<MenuBar signType={state.signType} />
 			</div>
 		);

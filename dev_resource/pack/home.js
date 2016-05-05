@@ -61,11 +61,15 @@ class Form extends Component{
 					header.setState({
 						signType : data.data.isMember ? 2 : 1
 					}, () => {
-						location.href = header.state.signType >> 1 ? "/manage/corporation" : "/user/join";
+						if(data.data.isMember){
+							location.href = parse(location.search.substr(1)).referer || "/manage/corporation";
+						}else{
+							location.href = "/user/join";
+						}
 					});
 				}, dialog);
 			}).fail(xhr => {
-				xhrTimeout("登录结果", dialog)
+				xhrTimeout("登录结果", dialog);
 			});
 		};
 	}

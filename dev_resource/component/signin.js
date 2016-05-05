@@ -1,9 +1,11 @@
-import {parse} from "cookie";
+import {parse} from "querystring";
 import React, {Component} from "react";
+import {afterSign, xhrTimeout} from "../pack/util";
 import InputRow from "./input";
 class SignIn extends Component{
 	constructor(props){
 		super(props);
+		let dialog = this.props.dialog;
 		this.getIptVal = name => {
 			return this.refs[name].refs.ipt.value;
 		};
@@ -15,31 +17,17 @@ class SignIn extends Component{
 				data : {
 					phone : this.getIptVal("phone"),
 					password : this.getIptVal("password")
-				},
-				success : data => {
-					if(!(data.code - 0)){
-						if(data.data.isMember){
-							location.href = parse(location.search.substr(1)).referer || this.props.referer || "/manage/corporation";
-						}else{
-							location.href = "/user/join";
-						}
-					}else{
-						this.props.dialog.setState({
-							option : {
-								title : {
-									iconClassName : "info",
-									name : "登录",
-									btnClose : () => {
-										location.href = "/";
-									}
-								},
-								message : "手机号码或密码错误"
-							},
-							isShow : 1,
-							autoClose : 0
-						});
-					}
 				}
+			}).done(data => {
+				afterSign(data, data => {
+					if(data.data.isMember){
+						location.href = parse(location.search.substr(1)).referer || this.props.referer || "/manage/corporation";
+					}else{
+						location.href = "/user/join";
+					}
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("登录结果", dialog);
 			});
 		};
 	}

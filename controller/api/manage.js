@@ -29,13 +29,6 @@ export default [
 		callback : pureTransmit
 	},
 	{
-		from : "authfile/upload",
-		to : "",
-		method : "post",
-		signType : [2],
-		callback : pureTransmit
-	},
-	{
 		from : "authfile/reassure",
 		to : `${BaseUrl}cif/front/authfile/saveUpload`,
 		method : "post",
@@ -85,13 +78,6 @@ export default [
 		callback : pureTransmit
 	},
 	{
-		from : "projectfile/upload",
-		to : "",
-		method : "post",
-		signType : [2],
-		callback : pureTransmit
-	},
-	{
 		from : "project/apply",
 		to : `${BaseUrl}clms/front/project/apply`,
 		method : "post",
@@ -123,13 +109,6 @@ export default [
 		from : "bill/status",
 		to : `${BaseUrl}clms/front/order/status`,
 		method : "get",
-		signType : [2],
-		callback : pureTransmit
-	},
-	{
-		from : "billfile/upload",
-		to : `${BaseUrl}clms/front/orderfile/updOrderFile`,
-		method : "post",
 		signType : [2],
 		callback : pureTransmit
 	},
@@ -213,13 +192,6 @@ export default [
 	{
 		from : "manufacturer/add",
 		to : `${BaseUrl}cif/front/partner/add`,
-		method : "post",
-		signType : [2],
-		callback : pureTransmit
-	},
-	{
-		from : "manufacturerfile/upload",
-		to : `${BaseUrl}clms/front/supplier/updSupplierFile`,
 		method : "post",
 		signType : [2],
 		callback : pureTransmit
