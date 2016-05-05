@@ -7,8 +7,8 @@ import connectRedis from "connect-redis";
 import {ServerConfig, RedisConfig} from "./config/config";
 import Log from "./controller/log";
 import RouterAuth from "./controller/auth";
-import {Router as RouterApi} from "./controller/api";
-import {Router as RouterStatic} from "./controller/static";
+import {Router as RouterApi} from "./controller/api/index";
+import {Router as RouterStatic} from "./controller/static/index";
 import react from "react";
 import reactDOMServer from "react-dom/server";
 const port = process.env.PORT || ServerConfig.port,

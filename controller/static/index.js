@@ -1,12 +1,12 @@
-import {Page as home} from "../dev_resource/pack/home";
-import {Page as join} from "../dev_resource/pack/join";
-import {Page as corporation} from "../dev_resource/pack/corporation";
-import {Page as project} from "../dev_resource/pack/project";
-import {Page as bill} from "../dev_resource/pack/bill";
-import {Page as loan} from "../dev_resource/pack/loan";
-import {Page as contract} from "../dev_resource/pack/contract";
-import {Page as messageEntrance} from "../dev_resource/pack/messageentrance";
-import {Page as manufacturer} from "../dev_resource/pack/manufacturer";
+import {Page as home} from "../../dev_resource/pack/home";
+import {Page as join} from "../../dev_resource/pack/join";
+import {Page as corporation} from "../../dev_resource/pack/corporation";
+import {Page as project} from "../../dev_resource/pack/project";
+import {Page as bill} from "../../dev_resource/pack/bill";
+import {Page as loan} from "../../dev_resource/pack/loan";
+import {Page as contract} from "../../dev_resource/pack/contract";
+import {Page as messageEntrance} from "../../dev_resource/pack/messageentrance";
+import {Page as manufacturer} from "../../dev_resource/pack/manufacturer";
 const Corp = "-仟金顶网络科技有限公司",
 	ViewModel = "./index",
 	Enum = [

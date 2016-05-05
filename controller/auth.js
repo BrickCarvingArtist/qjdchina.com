@@ -1,5 +1,5 @@
-import {Route as RouteStatic} from "./static";
-import {Route as RouteApi} from "./api";
+import {Route as RouteStatic} from "./static/index";
+import {Route as RouteApi} from "./api/index";
 let ligalRoute = [];
 const assembleLigalRoute = (route, signType) => {
 		return route.filter(list => {

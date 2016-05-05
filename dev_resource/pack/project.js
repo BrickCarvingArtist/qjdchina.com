@@ -436,10 +436,205 @@ Form.defaultProps = {
 		}
 	]
 };
+class Filter extends Component{
+	constructor(props){
+		super(props);
+		this.state = props;
+		store.dispatch({
+			type : "filter",
+			component : this
+		});
+		let project,
+			state,
+			status;
+		this.getProject = () => {
+			return this.state.arrProject || [];
+		};
+		this.getManufacturer = () => {
+			return this.state.arrManufacturer || [];
+		};
+		this.getStatus = subscriber => {
+			status = [];
+			(this.state.arrStatus || []).map(list => {
+				status[list.value] = list.label;
+			});
+			if(subscriber){
+				let arrSubscriber = this.subscriber || [];
+				arrSubscriber.push(subscriber);//cannot derepeat, memory leak!!!
+				this.subscriber = arrSubscriber;
+			}
+			return status;
+		};
+		this.getIptVal = name => {
+			return this.refs[name].refs.ipt.value;
+		};
+		let dateStart,
+			dateEnd;
+		this.toggleStart = () => {
+			dateStart = !this.state.dateStart;
+			dateEnd = 0;
+			this.setState({
+				dateStart,
+				dateEnd
+			});
+		};
+		this.toggleEnd = () => {
+			dateStart = 0;
+			dateEnd = !this.state.dateEnd;
+			this.setState({
+				dateStart,
+				dateEnd
+			});
+		};
+		this.getDateStart = (dateText, moment, view) => {
+			this.setState({
+				startDate : dateText,
+				dateStart : 0,
+			});
+		};
+		this.getDateEnd = (dateText, moment, view) => {
+			this.setState({
+				endDate : dateText,
+				dateEnd : 0
+			});
+		};
+		let projectName;
+		this.handleSearch = () => {
+			state = this.state;
+			projectName = this.getIptVal("projectName");
+			this.state.userClass.getData({
+				name : projectName ? encodeURI(projectName) : undefined,
+				supplierId : state.manufacturer,
+				status : state.state,
+				startDate : state.startDate,
+				endDate : state.endDate
+			});
+		};
+	}
+	componentDidMount(){
+		let dialog = store.getState().dialog.component;
+		require.ensure([], require => {
+			let datePicker = require("react-date-picker");
+			this.setState({
+				datePicker
+			});
+		}, "datepicker");
+		$.ajax({
+			url : "/api/manage/project/condition",
+			timeout : 2000
+		}).done(data => {
+			afterSign(data, data => {
+				this.setState({
+					arrStatus : data.data.statusItem
+				}, () => {
+					let subscriber = this.subscriber;
+					subscriber && subscriber.map(list => {
+						list.forceUpdate();
+					});
+				});
+			}, dialog);
+		}).fail(xhr => {
+			xhrTimeout("订单查询条件", dialog);
+		});
+		// $.ajax({
+		// 	url : "/api/manage/project/list",
+		// 	timeout : 2000
+		// }).done(data => {
+		// 	afterSign(data, data => {
+		// 		let project = [];
+		// 		data.data.map(list => {
+		// 			project[list.code] = list.name;
+		// 		});
+		// 		this.setState({
+		// 			arrProject : project
+		// 		});
+		// 	}, dialog);
+		// }).fail(xhr => {
+		// 	xhrTimeout("项目列表", dialog);
+		// });
+		$.ajax({
+			url : "/api/manage/project/manufacturer",
+			timeout : 2000
+		}).done(data => {
+			afterSign(data, data => {
+				let manufacturer = [];
+				data.data.map(list => {
+					manufacturer[list.supplierId] = list.supplierName;
+				});
+				this.setState({
+					arrManufacturer : manufacturer
+				});
+			}, dialog);
+		}).fail(xhr => {
+			xhrTimeout("项目列表", dialog);
+		});
+	}
+	render(){
+		let state = this.state,
+			DatePicker = state.datePicker,
+			isStart = state.dateStart,
+			isEnd = state.dateEnd,
+			startDate = state.startDate,
+			endDate = state.endDate;
+		return (
+			<div className="filter">
+				<label>开始日期:</label>
+				<input className="ipt-txt" placeholder="请选择开始日期" readOnly="readOnly" onClick={this.toggleStart} value={this.state.startDate} />
+				<label>截止日期:</label>
+				<input className="ipt-txt" placeholder="请选择截止日期" readOnly="readOnly" onClick={this.toggleEnd} value={this.state.endDate} />
+				{
+					DatePicker ?
+						<DatePicker
+							className={`${isStart || isEnd ? "on" : "off"}${isStart ? " start" : ""}${isEnd ? " end" : ""}`}
+							minDate={isStart ? "2010-01-01" : startDate || "2010-01-01"}
+							maxDate={isEnd ? Date.now() : endDate || Date.now()}
+							defaultDate={Date.now()}
+							highlightWeekends={true}
+							locale="zh-cn"
+							todayText="当前月"
+							gotoSelectedText="选中日"
+							onChange={this[`getDate${isStart ? "Start" : "End"}`]} /> : []
+				}
+				<label htmlFor="manufacturer">合作厂家:</label>
+				<SelectGroup id="manufacturer" option={
+					[this.getManufacturer()]
+				} checkType="single" callback={
+					(completeStatus, selectIndex) => {
+						completeStatus && this.setState({
+							manufacturer : selectIndex[0]
+						});
+					}
+				} />
+				<InputRow option={
+					{
+						label : "项目名称",
+						className : "ipt-txt"
+					}
+				} ref="projectName" />
+				<label htmlFor="state">项目状态:</label>
+				<SelectGroup id="state" option={
+					[this.getStatus()]
+				} checkType="single" callback={
+					(completeStatus, selectIndex) => {
+						completeStatus && this.setState({
+							state : selectIndex[0]
+						});
+					}
+				} />
+				<div className="option">
+					<a className="singleBtn" onClick={this.handleSearch}>查询</a>
+				</div>
+			</div>
+		);
+	}
+}
 class Table extends Component{
 	constructor(props){
 		super(props);
 		this.state = props;
+		this.getStatusName = status => {
+			return store.getState().filter.component.getStatus(this)[status];
+		};
 	}
 	componentDidMount(){
 		let dialog = store.getState().dialog.component;
@@ -481,10 +676,14 @@ class Table extends Component{
 			lists.push(
 				<tr key={index}>
 					<td title={list.code}>
-						{list.code}
+						<div>
+							{list.code}
+						</div>
 					</td>
 					<td title={list.name}>
-						{list.name}
+						<div>
+							{list.name}
+						</div>
 					</td>
 					<td title={list.supplierName}>
 						{list.supplierName}
@@ -497,11 +696,7 @@ class Table extends Component{
 					</td>
 					<td>
 						{
-							{
-								TODO : "申请中",
-								DONE : "申请成功",
-								REJECT : "申请失败"
-							}[list.status]
+							this.getStatusName(list.status)
 						}
 					</td>
 				</tr>
@@ -546,12 +741,12 @@ class Content extends Component{
 			});
 		};
 		let projectCode;
-		this.getData = () => {
+		this.getData = option => {
 			projectCode = parse(location.search.slice(1)).code;
 			$.ajax({
 				url : `/api/manage/project/${projectCode ? "detail" : "list"}`,
 				timeout : 2000,
-				data : {
+				data : option || {
 					projectCode
 				}
 			}).done(data => {
@@ -588,6 +783,7 @@ class Content extends Component{
 					{
 						[]/*<a className="singleBtn" onClick={this.handleClick}>我要申请</a>*/
 					}
+					<Filter userClass={this} />
 					<Table option={this.state.option} />
 				</div>
 			) : (

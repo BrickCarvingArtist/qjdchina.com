@@ -444,8 +444,8 @@ class Tr extends Component{
 		this.state = props;
 		let content = store.getState().content.component,
 			state;
-		this.getIsFailed = option => {
-			return option.status === "SIGN_FAILURE";
+		this.getSignStatus = status => {
+			return status === "SIGN";
 		};
 		this.handleSign = () => {
 			state = this.state,
@@ -478,7 +478,7 @@ class Tr extends Component{
 						i === "isSign" ? (
 							<a onClick={this.handleSign}>
 								{
-									this.getIsFailed(option) ? "查看" : "签约"
+									this.getSignStatus(option.status) ? "签约" : "查看"
 								}
 							</a>
 						) : 

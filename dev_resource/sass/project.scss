@@ -1,7 +1,6 @@
 @import "./component/core";
 @import "./component/variable";
 @import "./component/dialog";
-@import "./component/warning";
 @import "manage";
 $blankBg:url(../image/blank.png);
 $noteBg:url(../image/notebg.png);
@@ -17,7 +16,7 @@ $icon34:url(../image/icon34.png);
 }
 .mainArea{
 	.normal{
-		.singleBtn{
+		> .singleBtn{
 			position:absolute;
 			top:40px;
 			right:20px;
@@ -25,7 +24,7 @@ $icon34:url(../image/icon34.png);
 			display:block;
 			font-size:14px;
 		}
-		.singleBtn:before{
+		> .singleBtn:before{
 			position:absolute;
 			top:0;
 			right:90px;
@@ -34,6 +33,9 @@ $icon34:url(../image/icon34.png);
 			content:"更多项目需求，请点击";
 			color:$bdGrey;
 			cursor:text;
+		}
+		.filter{
+			margin-top:20px;
 		}
 		table{
 			margin-top:20px;

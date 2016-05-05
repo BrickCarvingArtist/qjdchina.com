@@ -543,7 +543,7 @@ class Filter extends Component{
 						className : "ipt-txt"
 					}
 				} ref="projectName" />
-				<label htmlFor="state">项目状态:</label>
+				<label htmlFor="state">订单状态:</label>
 				<SelectGroup id="state" option={
 					[this.getStatus()]
 				} checkType="single" callback={
