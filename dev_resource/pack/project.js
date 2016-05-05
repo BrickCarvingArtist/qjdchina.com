@@ -32,7 +32,7 @@ class Upload extends Component{
 			userClass = this.state.userClass;
 			$(findDOMNode(userClass)).ajaxSubmit({
 				type : "post",
-				url : "/api/manage/projectfile/upload",
+				url : "/api/upload/project",
 				processData : 1,
 				success : data => {
 					afterSign(data, data => {
@@ -759,8 +759,7 @@ class Content extends Component{
 						});
 					}else{
 						this.setState({
-							option : project,
-							status : !project.length
+							option : project
 						});
 					}
 				}, dialog);
@@ -777,7 +776,7 @@ class Content extends Component{
 			status = this.state.status;
 		return status ?
 			<Form project={this.state.project} /> : 
-			option && option.length ? (
+			option ? (
 				<div className="content normal">
 					<h1>我的项目</h1>
 					{

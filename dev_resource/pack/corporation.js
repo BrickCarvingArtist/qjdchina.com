@@ -384,7 +384,7 @@ class DialogContent extends Component{
 		this.handleUpload = e => {
 			$(findDOMNode(this)).ajaxSubmit({
 				type : "post",
-				url : "/api/manage/authfile/upload",
+				url : "/api/upload/auth",
 				processData : 1,
 				success : data => {
 					afterSign(data, data => {

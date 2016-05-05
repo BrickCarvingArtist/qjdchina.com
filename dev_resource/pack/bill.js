@@ -102,7 +102,7 @@ class DialogContent extends Component{
 			arrFilePath = e.target.value.split(/\\/);
 			$(findDOMNode(this)).ajaxSubmit({
 				type : "post",
-				url : "/api/manage/billfile/upload",
+				url : "/api/upload/bill",
 				processData : 1,
 				success : data => {
 					afterSign(data, data => {
