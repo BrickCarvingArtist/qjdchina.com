@@ -82,22 +82,39 @@ class SignUp extends Component{
 				smsCode : this.getStrangeIptVal("messageCaptcha"),
 				password : escape(this.getIptVal("password"))
 			};
-			$.ajax({
-				type : "post",
-				url : "/api/user/signup",
-				timeout : 2000,
-				data : option
-			}).done(data => {
-				delete option.smsCode;
-				afterSign(data, data => {
-					this.signIn(option);
-				}, dialog);
-			}).fail(xhr => {
-				xhrTimeout("注册结果", dialog);
-			});
+			if(this.state.agreement){
+				$.ajax({
+					type : "post",
+					url : "/api/user/signup",
+					timeout : 2000,
+					data : option
+				}).done(data => {
+					delete option.smsCode;
+					afterSign(data, data => {
+						this.signIn(option);
+					}, dialog);
+				}).fail(xhr => {
+					xhrTimeout("注册结果", dialog);
+				});
+			}else{
+				dialog.setState({
+					option : {
+						title : {
+							iconClassName : "info",
+							name : "温馨提示",
+							btnClose : 1
+						},
+						message : "请务必阅读并同意法律声明和隐私条款再提交注册"
+					},
+					isShow : 1,
+					autoClose : 2
+				});
+			}
 		};
-		this.handleAgreement = () => {
-			return 0;
+		this.handleAgreement = e => {
+			this.setState({
+				agreement : e.target.checked
+			});
 		};
 	}
 	componentDidMount(){
@@ -133,7 +150,7 @@ class SignUp extends Component{
 				{lists}
 				<input className="singleBtn" onClick={this.handleSubmit} value="注册" />
 				<div className="row">
-					<input className="agreement" type="checkbox" defaultChecked="checked" onChange={this.handleAgreement} />
+					<input className="agreement" type="checkbox" onChange={this.handleAgreement} />
 					<p className="note">
 						<span>我已阅读并同意</span>
 						<a href="/legal" target="_blank">法律声明</a>

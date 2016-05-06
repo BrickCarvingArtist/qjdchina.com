@@ -8,9 +8,8 @@ const upload = (req, res, callback) => {
 		if(files.upload.size >= 10 * 1024 * 1024){
 			_end = 1;
 			return res.json({
-				code : 100006016,
-				message : "附件超出限定大小",
-				data : null
+				code : 1,
+				message : "附件超出限定大小"
 			});
 		} 
 		let s = files.upload.name.split(/\./),
@@ -19,15 +18,17 @@ const upload = (req, res, callback) => {
 		if(types.indexOf(s[s.length - 1].toLowerCase()) < 0){
 			_end = 1;
 			return res.json({
-				code : 100006015,
-				message : `上传资料格式不正确,支持的文件格式为:${types.join()}`,
-				data : null
+				code : 1,
+				message : `上传资料格式不正确,支持的文件格式为:${types.join()}`
 			});
 		}
 		req.body.authFile = files.upload.path;
 	});
 	form.on("error", e => {
-		console.log(e);
+		return res.json({
+			code : 1,
+			message : "文件上传过程出错,请尝试重新上传"
+		});
 	});
 	form.encoding = "utf-8";
 	form.maxFieldsSize = 5 * 1024 * 1024;
