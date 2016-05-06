@@ -430,7 +430,7 @@ class DialogContent extends Component{
 			<form className="content">
 				<Files option={this.state.option} code={this.state.code} />
 				{
-					this.state.status ? (
+					this.state.upload ? (
 						<div className="singleBtn">
 							<input type="file" multiple="multiple" name="upload" onChange={this.handleUpload} />
 						</div>

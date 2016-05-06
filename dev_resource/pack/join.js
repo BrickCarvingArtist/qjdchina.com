@@ -25,8 +25,8 @@ class Form extends Component{
 		let dialog = store.getState().dialog.component;
 		//获取用户输入的值
 		//输入框
-		const getIptVal = (iptName) => {
-				return this.refs[iptName].refs.ipt.value;
+		const getIptVal = name => {
+				return this.refs[name].refs.ipt.value;
 			},
 			//地址下拉框
 			getAddress = (arrAddress, type) => {

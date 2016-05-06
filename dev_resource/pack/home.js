@@ -334,6 +334,7 @@ class Page extends Component{
 				<Header store={store} />
 				<Banner />
 				<Static />
+				<Media />
 				<Partner />
 				<Manufacturer />
 				<Footer />
