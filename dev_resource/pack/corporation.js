@@ -7,7 +7,6 @@ import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
 import Menu from "../component/menu";
-import Crumb from "../component/crumb";
 let store = createStore((state = [], action) => {
 	if(state[action.type]){
 		for(let i in action){
@@ -396,8 +395,8 @@ class DialogContent extends Component{
 								fileCateCode : this.state.code,
 								filePath : data.data.authFile
 							}
-						}).done(data => {
-							afterSign(data, data => {
+						}).done(_data => {
+							afterSign(_data, _data => {
 								let __data = _data.data;
 								this.setState({
 									option : __data.uploads
@@ -413,7 +412,7 @@ class DialogContent extends Component{
 										e.value = "";
 									});
 								});
-							});
+							}, dialog);
 						}).fail(xhr => {
 							xhrTimeout("上传资料文件", dialog);
 						});
@@ -509,17 +508,6 @@ class Main extends Component{
 					{
 						state.status ? (
 							<div className="content authPart">
-								<Crumb option={
-									[
-										{
-											name : "企业信息",
-											href : "/manage/corporation"
-										},
-										{
-											name : "认证进度"
-										}
-									]
-								} />
 								<h1>
 									{this.state.title}
 								</h1>

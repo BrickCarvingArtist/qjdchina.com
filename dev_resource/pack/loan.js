@@ -80,7 +80,6 @@ class Loan extends Component{
 					<p>
 						{`订单号:${state.orderCode}`}
 					</p>
-					<i className="tel"></i>
 				</div>
 				<ul className="iconInfo">
 					<li>
@@ -117,7 +116,7 @@ class Loan extends Component{
 									</strong>
 									<span>元</span>
 								</p>
-								<p>您已逾期，请于今日付款至仟金顶账户，并致电结算中心。</p>
+								<p>您已逾期，请于今日付款至仟金顶账户，并联系您的专属客户经理。</p>
 							</li>
 						) : []
 					}
@@ -143,7 +142,7 @@ class Loan extends Component{
 							</strong>
 							<span>元</span>
 						</p>
-						<p>如需全额还款，请于今日付款至仟金顶账户，并致电结算中心。</p>
+						<p>如需全额还款，请于今日付款至仟金顶账户，并联系您的专属客户经理。</p>
 					</li>
 				</ul>
 				<h3>付款计划表</h3>

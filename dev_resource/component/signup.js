@@ -1,16 +1,19 @@
 import React, {Component} from "react";
+import {afterSign, xhrTimeout} from "../pack/util";
 import Dialog from "./dialog";
 import InputRow from "./input";
 class SignUp extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
+			enableImageCaptchaUrl : 1,
 			imageCaptchaUrl : "",
 			message : "获取验证码",
 			enableMessage : 1
 		};
 		let dialog = props.dialog,
-			refs;
+			refs,
+			option;
 		this.getIptVal = name => {
 			refs = this.refs;
 			return refs[name].refs.ipt.value;
@@ -20,26 +23,28 @@ class SignUp extends Component{
 			return refs[name].value;
 		};
 		this.handleImageCaptcha = () => {
-			this.setState({
+			this.state.enableImageCaptchaUrl && this.setState({
 				imageCaptchaUrl : `/api/stream/captcha?t=${Date.now()}`
 			});
 		};
 		this.handleMessageCaptcha = () => {
 			this.state.enableMessage && $.ajax({
 				url : "/api/message/captcha",
+				timeout : 2000,
 				data : {
 					source : "register",
 					imgCode : this.getStrangeIptVal("imageCaptcha"),
 					phone : this.getIptVal("phone")
 				}
 			}).done(data => {
-				if(!(data.code - 0)){
+				afterSign(data, data => {
 					let seconds = 60,
 						t = setInterval(() => {
 							if(--seconds){
 								this.setState({
 									message : `${seconds}秒后重试`,
-									enableMessage : 0,
+									enableImageCaptchaUrl : 0,
+									enableImageUrl : 0,
 								});
 							}else{
 								clearInterval(t);
@@ -49,45 +54,46 @@ class SignUp extends Component{
 								});
 							}
 						}, 1000);
-				}else{
-					dialog.setState({
-						option : {
-							title : {
-								iconClassName : "info",
-								name : "提示",
-								btnClose : 1
-							},
-							content : 0,
-							message : data.message
-						},
-						isShow : 1
-					});
-				}
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("验证码数据", dialog);
+			});
+		};
+		this.signIn = data => {
+			$.ajax({
+				type : "post",
+				url : "/api/user/signin",
+				data
+			}).done(data => {
+				afterSign(data, data => {
+					if(data.data.isMember){
+						location.href = parse(location.search.substr(1)).referer || this.props.referer || "/manage/corporation";
+					}else{
+						location.href = "/user/join";
+					}
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("登录结果", dialog);
 			});
 		};
 		this.handleSubmit = () => {
+			option = {
+				phone : this.getIptVal("phone"),
+				smsCode : this.getStrangeIptVal("messageCaptcha"),
+				password : escape(this.getIptVal("password"))
+			};
 			$.ajax({
 				type : "post",
 				url : "/api/user/signup",
-				data : {
-					phone : this.getIptVal("phone"),
-					smsCode : this.getStrangeIptVal("messageCaptcha"),
-					password : escape(this.getIptVal("password"))
-				}
+				timeout : 2000,
+				data : option
 			}).done(data => {
-				dialog.setState({
-					option : {
-						title : {
-							iconClassName : "info",
-							name : "提示",
-							btnClose : 1
-						},
-						content : 0,
-						message : data.message
-					},
-					isShow : 1,
-					autoClose : 1
-				});
+				delete option.smsCode;
+				afterSign(data, data => {
+					this.signIn(option);
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("注册结果", dialog);
 			});
 		};
 		this.handleAgreement = () => {

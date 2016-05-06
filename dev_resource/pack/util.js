@@ -36,7 +36,7 @@ const afterSign = (data, callback, dialog, path) => {
 						message : data.message
 					},
 					isShow : 1,
-					autoClose : 1.5
+					autoClose : 2
 				});
 			}
 		}

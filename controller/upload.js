@@ -14,12 +14,13 @@ const upload = (req, res, callback) => {
 			});
 		} 
 		let s = files.upload.name.split(/\./),
-			type = s[s.length - 1];
-		if(["jpg", "jpeg", "gif", "bmp", "png", "pdf"].indexOf(s[s.length - 1].toLowerCase()) < 0){
+			type = s[s.length - 1],
+			types = ["jpg", "jpeg", "gif", "bmp", "png", "pdf"];
+		if(types.indexOf(s[s.length - 1].toLowerCase()) < 0){
 			_end = 1;
 			return res.json({
 				code : 100006015,
-				message : "上传资料格式不正确",
+				message : `上传资料格式不正确,支持的文件格式为:${types.join()}`,
 				data : null
 			});
 		}

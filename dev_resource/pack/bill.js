@@ -359,6 +359,7 @@ Form.defaultProps = {
 			id : "purchaseAmount",
 			className : "ipt-txt",
 			label : "订单总金额",
+			maxlength : 15,
 			unit : "元"
 		},
 		{

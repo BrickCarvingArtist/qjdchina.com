@@ -410,6 +410,7 @@ Form.defaultProps = {
 			id : "contractAmount",
 			className : "ipt-txt",
 			label : "合同金额",
+			maxlength : 15,
 			unit : "元"
 		},
 		{
@@ -417,6 +418,7 @@ Form.defaultProps = {
 			id : "loanAmount",
 			className : "ipt-txt",
 			label : "申请金额",
+			maxlength : 15,
 			unit : "元"
 		},
 		{
