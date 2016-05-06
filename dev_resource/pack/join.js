@@ -126,7 +126,7 @@ class Form extends Component{
 		//查询品类
 		$.ajax({
 			url : "/api/user/supplier/category",
-			timeout : 10000
+			timeout : 2000
 		}).done(data => {
 			afterSign(data, data => {
 				data.data.map((list, index) => {
@@ -135,7 +135,8 @@ class Form extends Component{
 				});
 				//后才能查询合作厂家列表
 				$.ajax({
-					url : "/api/user/supplier/list"
+					url : "/api/user/supplier/list",
+					timeout : 2000
 				}).done(data => {
 					afterSign(data, data => {
 						//拼装合作厂家
