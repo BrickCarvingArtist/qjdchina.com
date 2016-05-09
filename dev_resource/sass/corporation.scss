@@ -24,6 +24,7 @@ $progressIcon:url(../image/progressicon.png);
 			top:30px;
 			right:20px;
 			padding-left:50px;
+			height:44px;
 			background-image:$authIcon;
 			background-repeat:no-repeat;
 			cursor:pointer;
@@ -40,6 +41,37 @@ $progressIcon:url(../image/progressicon.png);
 		}
 		.notAuthorized{
 			background-position:0 -6px;
+		}
+		.balance{
+			float:left;
+			display:flex;
+			margin-top:30px;
+			width:100%;
+			overflow:hidden;
+			border:1px solid $menuBd;
+			.case{
+				float:left;
+				flex:1;
+				margin:8px 0;
+				height:100px;
+				strong{
+					float:left;
+					margin-top:20px;
+					width:100%;
+					text-align:center;
+					line-height:2;
+				}
+				p{
+					float:left;
+					width:100%;
+					text-align:center;
+					letter-spacing:1px;
+					line-height:2;
+				}
+			}
+			.case:not(:last-of-type){
+				border-right:1px solid $menuBd;
+			}
 		}
 		.info{
 			float:left;

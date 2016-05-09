@@ -66,7 +66,6 @@ class Progress extends Component{
 				</li>
 			);
 		});
-
 		return (
 			<div className="progress">
 				<div className={`bar ${option[index].className} success`}>
@@ -439,6 +438,69 @@ class DialogContent extends Component{
 		);
 	}
 }
+class Balance extends Component{
+	constructor(props){
+		super(props);
+		this.state = props;
+		let temp,
+			arr;
+		this.getFormatNumber = number => {
+			temp = number.split(/\./);
+			arr = [];
+			temp[0].toString().split("").map((list, index, _arr) => {
+				index && index % 3 === _arr.length % 3 && arr.push(",");
+				arr.push(list);
+			});
+			return `¥${arr.join("")}.${temp[1]}`;
+		};
+	}
+	componentWillReceiveProps(nextProps){
+		this.setState(nextProps);
+	}
+	render(){
+		let lists = [],
+			state = this.state,
+			title = state.title,
+			option = state.option;
+		for(let i in title){
+			lists.push(
+				<div className="case" key={i.id}>
+					<strong className="txt4">
+						{title[i].label}
+					</strong>
+					<p className="txt1">
+						{this.getFormatNumber((option[title[i].name] || 0).toFixed(2))}
+					</p>
+				</div>
+			);
+		}
+		return (
+			<div className="balance">
+				{lists}
+			</div>
+		);
+	}
+}
+Balance.defaultProps = {
+	title : [
+		{
+			name : "creditLine",
+			label : "信用总额度"
+		},
+		{
+			name : "balance",
+			label : "信用剩余额度"
+		},
+		{
+			name : "bankBalance",
+			label : "银行存款余额"
+		},
+		{
+			name : "billBlance",
+			label : "票据余额"
+		}
+	]
+};
 class Main extends Component{
 	constructor(props){
 		super(props);
@@ -461,10 +523,13 @@ class Main extends Component{
 				timeout : 2000
 			}).done(data => {
 				afterSign(data, data => {
-					let _data = data.data;
+					let _data = data.data,
+						balance = _data.balanceData;
+					balance.creditLine = _data.credit.creditLine;
 					this.setState({
-						authorized : _data.status === "DONE",
-						creditLimit : _data.creditLine
+						authorized : _data.credit.status === "DONE",
+						balance,
+						creditTime : _data.credit.gmtChecked || ""
 					});
 				}, dialog);
 			}).fail(xhr => {
@@ -477,6 +542,7 @@ class Main extends Component{
 			infos,
 			state = this.state,
 			authorized = state.authorized,
+			balance = state.balance,
 			info = state.info;
 		info && info.map((list, index) => {
 			infos = [];
@@ -524,12 +590,16 @@ class Main extends Component{
 								</h1>
 								<a className={`auth ${state.authorized ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
 									<span>
-										{state.authorized ? "通过认证" : "授信资料未认证"}</span>
+										{state.authorized ? "通过认证" : "授信资料未认证"}
+									</span>
 									<br />
 									<span>
-										{state.authorized ? `信用额度${state.creditLimit}元` : "点击上传"}
+										{state.authorized ? `${state.creditTime.split(/\s/)[0]}` : "点击上传"}
 									</span>
 								</a>
+								{
+									balance ? <Balance option={balance} /> : []
+								}
 								{lists}
 							</div>
 						)
