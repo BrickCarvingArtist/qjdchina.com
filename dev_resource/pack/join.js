@@ -235,7 +235,7 @@ Form.defaultProps = {
 			id : "ic",
 			className : "ipt-txt",
 			label : "工商注册号",
-			maxlength : 15
+			maxlength : 18
 		},
 		{
 			type : 0,

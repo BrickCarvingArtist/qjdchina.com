@@ -100,16 +100,16 @@ class TopNav extends Component{
 					{
 						mobile ? (
 							<div className="anchor" onClick={this.signOut}>退出</div>
-						) : (
+						) : []/*(
 							<div className="anchor" onClick={this.signUp}>注册</div>
-						)
+						)*/
 					}
 					{
 						mobile ? (
 							<div className="info">
 								<a href={signType ? "/manage/corporation" : "/user/join"}>{mobile}</a>
 								<a href={signType ? "/manage/corporation" : "/user/join"}>个人中心</a>
-								<a href="/user/findPwd">修改密码</a>
+								{/*<a href="/user/findPwd">修改密码</a>*/}
 							</div>
 						) : (
 							<div className="anchor" onClick={this.signIn}>登录</div>

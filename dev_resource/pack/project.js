@@ -6,7 +6,6 @@ import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
 import Dialog from "../component/dialog";
-import Warning from "../component/warning";
 import Menu from "../component/menu";
 import InputRow from "../component/input";
 import SelectGroup from "../component/select_group";
@@ -252,12 +251,6 @@ class Form extends Component{
 			});
 		}
 	}
-	componentDidUpdate(){
-		this.state.status || store.dispatch({
-			type : "warning",
-			component : this.refs.warning
-		});
-	}
 	render(){
 		let lists = [],
 			state = this.state,
@@ -270,17 +263,7 @@ class Form extends Component{
 		option.map((list, index) => {
 			if(list.iptType){
 				lists.push(
-					<InputRow option={list} key={index} ref={list.id} value={project ? project[list.id] : undefined} validate={
-						{
-							type : ["noEmpties", "noBlank", "noScript"],
-							callback : message => {
-								store.getState().warning.component.setState({
-									isShow : message,
-									message
-								});
-							}
-						}
-					} />
+					<InputRow option={list} key={index} ref={list.id} value={project ? project[list.id] : undefined} />
 				);
 			}else{
 				list.id === "address" && lists.push(
@@ -377,7 +360,6 @@ class Form extends Component{
 		) :
 		(
 			<form>
-				<Warning ref="warning"/>
 				{lists}
 				<Upload ref="upload" userClass={this} />
 				<input className="singleBtn" type="button" value="提交申请" onClick={this.handleSubmit} />
@@ -705,14 +687,22 @@ class Table extends Component{
 			);
 		});
 		return (
-			<table>
+			<table className={lists.length ? "" : "blank"}>
 				<thead>
 					<tr>
 						{titles}
 					</tr>
 				</thead>
 				<tbody>
-					{lists}
+					{
+						lists.length ?
+						lists :
+						<tr>
+							<td colSpan={Object.keys(thead).length}>
+								<div className="noData"></div>
+							</td>
+						</tr>
+					}
 				</tbody>
 			</table>
 		);

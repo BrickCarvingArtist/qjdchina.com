@@ -30,7 +30,6 @@ body{
 }
 .mainArea{
 	float:left;
-	margin:32px 0 132px;
 	width:100%;
 	overflow:hidden;
 	.w1000{
@@ -313,9 +312,22 @@ body{
 		}
 	}
 }
-.footer{
-	position:fixed;
-	left:0;
-	bottom:0;
-	z-index:1;
+@media (min-height:801px){
+	.mainArea{
+		margin:32px 0 132px;
+	}
+	.footer{
+		position:fixed;
+		left:0;
+		bottom:0;
+		z-index:1;
+	}
+}
+@media (max-height:800px){
+	.mainArea{
+		margin:32px 0;
+	}
+	.footer{
+		float:left;
+	}
 }

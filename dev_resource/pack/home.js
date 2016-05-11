@@ -86,8 +86,8 @@ class Form extends Component{
 			<from className="signIn">
 				{lists}
 				<a className="singleBtn" onClick={this.handleSubmit}>登录</a>
-				<a className="anchorSignUp" onClick={topNav.signUp}>免费注册</a>
-				<a className="anchorReset" href="/user/findPwd">忘记密码</a>
+				{/*<a className="anchorSignUp" onClick={topNav.signUp}>免费注册</a>
+				<a className="anchorReset" href="/user/findPwd">忘记密码</a>*/}
 			</from>
 		);
 	}

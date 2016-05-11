@@ -523,15 +523,21 @@ class Main extends Component{
 				timeout : 2000
 			}).done(data => {
 				afterSign(data, data => {
-					let _data = data.data,
-						balance = _data.balanceData;
-					balance.creditLine = _data.credit.creditLine;
-					this.setState({
-						authorized : _data.credit.status === "DONE",
-						balance,
-						creditTime : _data.credit.gmtChecked || ""
-					});
-				}, dialog);
+					if(!(data.code - 0)){
+						let _data = data.data,
+							balance = _data.balanceData;
+						balance.creditLine = _data.credit.creditLine;
+						this.setState({
+							authorized : _data.credit.status === "DONE" ? 2 : _data.credit.status === "REJECT" ? 1 : 0,
+							balance,
+							creditTime : _data.credit.gmtChecked || ""
+						});
+					}else{
+						this.setState({
+							submit : 1
+						});
+					}
+				}, dialog, 103003001);
 			}).fail(xhr => {
 				xhrTimeout("授信额度", dialog);
 			});
@@ -588,13 +594,13 @@ class Main extends Component{
 								<h1>
 									{state.title}
 								</h1>
-								<a className={`auth ${state.authorized ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
+								<a className={`auth ${state.authorized >> 1 ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
 									<span>
-										{state.authorized ? "通过认证" : "授信资料未认证"}
+										{state.authorized >> 1 ? "通过认证" : state.authorized ? "认证失败" : "授信资料未认证"}
 									</span>
 									<br />
 									<span>
-										{state.authorized ? `${state.creditTime.split(/\s/)[0]}` : "点击上传"}
+										{state.authorized ? `${state.creditTime.split(/\s/)[0]}` : state.submit ? "认证中" : "点击上传"}
 									</span>
 								</a>
 								{
