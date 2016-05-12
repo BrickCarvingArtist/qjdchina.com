@@ -1,6 +1,6 @@
 import React, {createFactory} from "react";
 const afterSign = (data, callback, dialog, code) => {
-	if(!(data.code - 0) || data.code !== code){
+	if(!(data.code - 0) || code && data.code !== code){
 		callback(data);
 	}else{
 		dialog.setState({

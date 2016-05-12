@@ -10,7 +10,7 @@ class Select extends Component{
 				selectIndex = (userClass.state.selectIndex || []).filter((list, _index) => {
 					return index > _index;
 				});
-				selectIndex[index] = e.target.value;
+			selectIndex[index] = e.target.value;
 			userClass.setState({
 				selectIndex
 			}, () => {

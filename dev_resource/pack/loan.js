@@ -460,6 +460,13 @@ class Content extends Component{
 		this.state = props;
 		let dialog = store.getState().dialog.component;
 		this.getData = option => {
+			if(option){
+				for(let i in option){
+					if(option[i] === "0"){
+						delete option[i];
+					}
+				}
+			}
 			$.ajax({
 				url : "/api/manage/loan/list",
 				data : option

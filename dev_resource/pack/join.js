@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {createStore} from "redux";
 import {parse} from "querystring";
+import {HostConfig} from "../../config/config";
 import {afterSign, xhrTimeout} from "./util";
 import InputRow from "../component/input";
 import SelectGroup from "../component/select_group";
@@ -108,52 +109,68 @@ class Form extends Component{
 			sub = [],
 			query = parse(location.search.substr(1)),
 			option = {};
-		Object.keys(query).length === 5 && this.setState({
-			info : query,
-			corp : query.companyName,
-			street : query.address
-		});
-		require.ensure([], require => {
-			const Area_Config = require("../lib/area_config");
-			let areaConfig = [];
-			for(let i in Area_Config){
-				areaConfig.push(Area_Config[i]);
-			}
+		if(Object.keys(query).length === 5){
 			this.setState({
-				areaConfig
+				info : query,
+				corp : query.companyName,
+				street : query.address
 			});
-		}, "area_config");
-		//查询品类
-		$.ajax({
-			url : "/api/user/supplier/category",
-			timeout : 2000
-		}).done(data => {
-			afterSign(data, data => {
-				data.data.map((list, index) => {
-					sup[list.value] = list.label;
-					sub[list.value] = [];
+			require.ensure([], require => {
+				const Area_Config = require("../lib/area_config");
+				let areaConfig = [];
+				for(let i in Area_Config){
+					areaConfig.push(Area_Config[i]);
+				}
+				this.setState({
+					areaConfig
 				});
-				//后才能查询合作厂家列表
-				$.ajax({
-					url : "/api/user/supplier/list",
-					timeout : 2000
-				}).done(data => {
-					afterSign(data, data => {
-						//拼装合作厂家
-						data.data.map((list, index) => {
-							sub[list.categoryCode][list.id] = list.name;
-						});
-						this.setState({
-							manufacturers : [sup, sub]
-						});
-					}, dialog);
-				}).fail(xhr => {
-					xhrTimeout("合作厂家列表", dialog);
-				});
-			}, dialog);
-		}).fail(xhr => {
-			xhrTimeout("合作厂家所属品类", dialog);
-		});
+			}, "area_config");
+			//查询品类
+			$.ajax({
+				url : "/api/user/supplier/category",
+				timeout : 2000
+			}).done(data => {
+				afterSign(data, data => {
+					data.data.map((list, index) => {
+						sup[list.value] = list.label;
+						sub[list.value] = [];
+					});
+					//后才能查询合作厂家列表
+					$.ajax({
+						url : "/api/user/supplier/list",
+						timeout : 2000
+					}).done(data => {
+						afterSign(data, data => {
+							//拼装合作厂家
+							data.data.map((list, index) => {
+								sub[list.categoryCode][list.id] = list.name;
+							});
+							this.setState({
+								manufacturers : [sup, sub]
+							});
+						}, dialog);
+					}).fail(xhr => {
+						xhrTimeout("合作厂家列表", dialog);
+					});
+				}, dialog);
+			}).fail(xhr => {
+				xhrTimeout("合作厂家所属品类", dialog);
+			});
+		}else{
+			dialog.setState({
+				option : {
+					title : {
+						iconClassName : "info",
+						name : "温馨提示",
+						btnClose : () => {
+							location.href = `https://${HostConfig.subDomain}.zhuozhuwang.com/loan/corp?refer=${location.href}`;
+						}
+					},
+					message : "认证申请未提交，请重新申请认证！"
+				},
+				isShow : 1
+			});
+		}
 	}
 	render(){
 		let lists = [],

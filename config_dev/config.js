@@ -2,6 +2,7 @@ const ServerConfig = {
 		port : 3100
 	},
 	HostConfig = {
+		subDomain : "dev2",
 		//Tip : domain
 		hostName : "dev2.qjdchina.com",
 		//Tip : 后端nginx服务IP

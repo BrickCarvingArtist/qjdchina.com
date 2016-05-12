@@ -311,10 +311,9 @@ class Filter extends Component{
 				dateEnd : 0
 			});
 		};
-		let projectName;
 		this.handleSearch = () => {
-			let state = this.state;
-			projectName = this.getIptVal("projectName");
+			let state = this.state,
+				projectName = this.getIptVal("projectName");
 			store.getState().table.component.getData({
 				projectName : projectName ? encodeURI(projectName) : undefined,
 				type : state.type,
@@ -468,6 +467,9 @@ class Tr extends Component{
 			return setting.types[option.type];
 		};
 	}
+	componentWillReceiveProps(nextProps){
+		this.setState(nextProps);
+	}
 	render(){
 		let lists = [],
 			option = this.state.option;
@@ -513,8 +515,12 @@ class Table extends Component{
 			component : this
 		});
 		this.getData = option => {
-			for(let i in option){
-				option[i] = option[i] === "0" ? undefined : option[i];
+			if(option){
+				for(let i in option){
+					if(option[i] === "0"){
+						delete option[i];
+					}
+				}
 			}
 			let dialog = store.getState().dialog.component;
 			$.ajax({

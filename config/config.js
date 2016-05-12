@@ -6,6 +6,7 @@ const WebpackDevServerConfig = {
 		port : 3000
 	},
 	HostConfig = {
+		subDomain : "dev2",
 		//Tip : domain
 		hostName : "dev2.qjdchina.com",
 		//Tip : 后端nginx服务IP

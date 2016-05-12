@@ -734,6 +734,13 @@ class Content extends Component{
 		};
 		let projectCode;
 		this.getData = option => {
+			if(option){
+				for(let i in option){
+					if(option[i] === "0"){
+						delete option[i];
+					}
+				}
+			}
 			projectCode = parse(location.search.slice(1)).code;
 			$.ajax({
 				url : `/api/manage/project/${projectCode ? "detail" : "list"}`,
