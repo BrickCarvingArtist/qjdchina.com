@@ -47,7 +47,8 @@ class Upload extends Component{
 		};
 		this.delete = () => {
 			this.setState({
-				fileName : ""
+				fileName : "",
+				realPath : undefined
 			});
 		}
 	}
@@ -87,7 +88,6 @@ class Form extends Component{
 			projectParty,
 			contractAmount,
 			loanAmount,
-			loanPeriod,
 			projectContractPath;
 		//获取组装适配后的合作厂家
 		this.getManufacturer = data => {
@@ -180,7 +180,6 @@ class Form extends Component{
 			projectParty = this.getIptVal("projectParty");
 			contractAmount = this.getIptVal("contractAmount");
 			loanAmount = this.getIptVal("loanAmount");
-			loanPeriod = state.term;
 			projectContractPath = this.refs.upload.state.realPath;
 			$.ajax({
 				type : "post",
@@ -200,7 +199,6 @@ class Form extends Component{
 					projectParty,
 					contractAmount,
 					loanAmount,
-					loanPeriod,
 					projectContractPath,
 				}
 			}).done(data => {
@@ -235,8 +233,6 @@ class Form extends Component{
 		if(project){
 			this.setState({
 				arrManufacturer : this.getManufacturer()
-			}, () => {
-				this.getProductData();
 			});
 		}else{
 			$.ajax({
@@ -288,24 +284,6 @@ class Form extends Component{
 						}
 					</div>
 				);
-				list.id === "loanPeriod" && lists.push(
-					<div className="row" key={index}>
-						<label htmlFor={list.id}>
-							{list.label}
-						</label>
-						<SelectGroup id={list.id} option={
-							[
-								[,,"2个月", "3个月", "4个月", "5个月", "6个月"]
-							]
-						} checkType="single" ref={list.id} callback={
-							(completeStatus, selectIndex) => {
-								completeStatus && this.setState({
-									term : selectIndex[0]
-								});
-							}
-						} />
-					</div>
-				);
 				list.id === "manufacturer" && arrManufacturer && lists.push(
 					<div className="row" key={index}>
 						<label htmlFor={list.id}>
@@ -329,7 +307,6 @@ class Form extends Component{
 								}
 							}
 						} />
-						<a className="add" href="/manage/manufacturer">＋新增</a>
 					</div>
 				);
 				list.id === "product" && state.showProduct && arrProduct && lists.push(
@@ -404,11 +381,6 @@ Form.defaultProps = {
 			label : "申请金额",
 			maxlength : 15,
 			unit : "元"
-		},
-		{
-			iptType : 0,
-			id : "loanPeriod",
-			label : "申请期限"
 		},
 		{
 			iptType : 0,
@@ -618,28 +590,23 @@ class Table extends Component{
 	constructor(props){
 		super(props);
 		this.state = props;
+		this.dateFormat = object => {
+			for(let i in object){
+				if(~i.search(/(date)|(time)|(gmt)/ig)){
+					object[i] = object[i].split(/\s/)[0];
+				}
+			}
+		};
 		this.getStatusName = status => {
 			return store.getState().filter.component.getStatus(this)[status];
 		};
-	}
-	componentDidMount(){
-		let dialog = store.getState().dialog.component;
-		$.ajax({
-			url : "/api/user/supplier/category",
-			timeout : 2000
-		}).done(data => {
-			afterSign(data, data => {
-				let arrCategory = [];
-				data.data.map((list) => {
-					arrCategory[list.value] = list.label;
-				});
-				this.setState({
-					arrCategory
-				});
-			}, dialog);
-		}).fail(xhr => {
-			xhrTimeout("合作厂家所属品类", dialog);
-		});
+		this.getAddress = (provinceCode, cityCode, areaCode) => {
+			let areaConfig = this.state.areaConfig,
+				province = areaConfig[0],
+				city = areaConfig[1],
+				region = areaConfig[2];
+			return `${province[provinceCode]}${city[provinceCode][cityCode] || ""}`;
+		};
 	}
 	componentWillReceiveProps(nextProps){
 		this.setState(nextProps);
@@ -649,7 +616,6 @@ class Table extends Component{
 			lists = [],
 			state = this.state,
 			thead = state.title,
-			arrCategory = state.arrCategory || [],
 			option = state.option;
 		for(let i in thead){
 			titles.push(
@@ -659,26 +625,25 @@ class Table extends Component{
 			);
 		}
 		option && option.map((list, index) => {
+			this.dateFormat(list);
 			lists.push(
 				<tr key={index}>
-					<td title={list.code}>
-						<div>
-							{list.code}
-						</div>
-					</td>
-					<td title={list.name}>
+					<td>
 						<div>
 							{list.name}
 						</div>
 					</td>
-					<td title={list.supplierName}>
+					<td>
+						{this.getAddress(list.provinceCode, list.cityCode, list.areaCode)}
+					</td>
+					<td>
 						{list.supplierName}
 					</td>
 					<td>
-						{arrCategory[list.categoryCode]}
-					</td>
-					<td title={`${list.loanAmount}元`}>
 						{`${list.loanAmount}元`}
+					</td>
+					<td>
+						{list.gmtCreated}
 					</td>
 					<td>
 						{
@@ -712,12 +677,12 @@ class Table extends Component{
 }
 Table.defaultProps = {
 	title : {
-		id : "项目编号",
 		name : "项目名称",
+		address : "项目所在地",
 		manufacturer : "合作厂家",
-		category : "品类",
 		sum : "申请金额",
-		progress : "申请进度"
+		time : "申请时间",
+		status : "状态"
 	}
 };
 class Content extends Component{
@@ -771,7 +736,18 @@ class Content extends Component{
 		};
 	}
 	componentDidMount(){
-		this.getData();
+		require.ensure([], require => {
+			const Area_Config = require("../lib/area_config");
+			let areaConfig = [];
+			for(let i in Area_Config){
+				areaConfig.push(Area_Config[i]);
+			}
+			this.setState({
+				areaConfig
+			}, () => {
+				this.getData();
+			});
+		}, "area_config");
 	}
 	render(){
 		let option = this.state.option,
@@ -785,7 +761,7 @@ class Content extends Component{
 						[]/*<a className="singleBtn" onClick={this.handleClick}>我要申请</a>*/
 					}
 					<Filter userClass={this} />
-					<Table option={this.state.option} />
+					<Table option={this.state.option} areaConfig={this.state.areaConfig} />
 				</div>
 			) : (
 				<div className="content blank">

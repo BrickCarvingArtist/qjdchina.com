@@ -446,6 +446,13 @@ class Tr extends Component{
 		this.getSignStatus = status => {
 			return status === "SIGN";
 		};
+		this.dateFormat = object => {
+			for(let i in object){
+				if(~i.search(/(date)|(time)|(gmt)/ig)){
+					object[i] = object[i].split(/\s/)[0];
+				}
+			}
+		};
 		this.handleSign = () => {
 			state = this.state,
 			state.isSign || content.handleSign(() => {
@@ -473,6 +480,7 @@ class Tr extends Component{
 	render(){
 		let lists = [],
 			option = this.state.option;
+		this.dateFormat(option);
 		for(let i in option){
 			lists.push(
 				<td key={i}>

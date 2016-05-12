@@ -573,6 +573,13 @@ class Tr extends Component{
 				progress : 1
 			});
 		};
+		this.dateFormat = object => {
+			for(let i in object){
+				if(~i.search(/(date)|(time)|(gmt)/ig)){
+					object[i] = object[i].split(/\s/)[0];
+				}
+			}
+		};
 		this.handleFile = () => {
 			store.getState().dialog.component.setState({
 				option : {
@@ -605,6 +612,7 @@ class Tr extends Component{
 			option = state.option,
 			status = option.status,
 			color = state.color;
+		this.dateFormat(option);
 		for(let i in title){
 			lists.push(
 				<td key={i}>
