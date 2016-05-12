@@ -207,6 +207,8 @@ class Form extends Component{
 				afterSign(data, data => {
 					this.setState({
 						status : 1
+					}, () => {
+						history.pushState(null, document.title, location.href.replace(location.search, ""));
 					});
 				}, dialog);
 			}).fail(xhr => {
@@ -758,6 +760,7 @@ class Content extends Component{
 						});
 					}else{
 						this.setState({
+							status : 0,
 							option : project
 						});
 					}
