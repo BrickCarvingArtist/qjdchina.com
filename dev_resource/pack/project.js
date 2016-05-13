@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {findDOMNode} from "react-dom";
 import {createStore} from "redux";
 import {parse} from "querystring";
+import {HostConfig} from "../../config/config";
 import {afterSign, xhrTimeout} from "./util";
 import Header from "../component/header";
 import Footer from "../component/footer";
@@ -640,6 +641,9 @@ class Table extends Component{
 						{list.supplierName}
 					</td>
 					<td>
+						{list.product ? list.product.name : "无产品"}
+					</td>
+					<td>
 						{`${list.loanAmount}元`}
 					</td>
 					<td>
@@ -647,7 +651,7 @@ class Table extends Component{
 					</td>
 					<td>
 						{
-							this.getStatusName(list.status)
+							this.getStatusName(list.status) || "审批中"
 						}
 					</td>
 				</tr>
@@ -680,6 +684,7 @@ Table.defaultProps = {
 		name : "项目名称",
 		address : "项目所在地",
 		manufacturer : "合作厂家",
+		product : "产品",
 		sum : "申请金额",
 		time : "申请时间",
 		status : "状态"
@@ -719,10 +724,26 @@ class Content extends Component{
 				afterSign(data, data => {
 					let project = data.data;
 					if(projectCode){
-						this.setState({
-							status : 1,
-							project
-						});
+						if(project.status === "UNDO"){
+							this.setState({
+								status : 1,
+								project
+							});
+						}else{
+							dialog.setState({
+								option : {
+									title : {
+										iconClassName : "info",
+										name : "温馨提示",
+										btnClose : () => {
+											location.href = `https://${HostConfig.subDomain}.zhuozhuwang.com/loan/project?refer=${location.href}`;
+										}
+									},
+									message : "您的项目申请已成功提交，请耐心等待审核！"
+								},
+								isShow : 1
+							});
+						}
 					}else{
 						this.setState({
 							status : 0,

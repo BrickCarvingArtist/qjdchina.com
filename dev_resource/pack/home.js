@@ -192,11 +192,61 @@ class Static extends Component{
 	}
 }
 class Media extends Component{
+	constructor(props){
+		super(props);
+		this.state = props;
+	}
+	componentDidMount(){
+		$.ajax({
+			url : "/_manage/fetchnews",
+			timeout : 10000,
+			dataType : "json"
+		}).done(data => {
+			let news = data.data;
+			this.setState({
+				facade : news[0],
+				option : news.filter((list, index) => {
+					return index > 0 && list.top;
+				})
+			});
+		});
+	}
 	render(){
+		let lists = [],
+			state = this.state,
+			facade = state.facade,
+			option = state.option || [];
+		option.map((list, index) => {
+			lists.push(
+				<a href={`/newsInfo/${list._id}`}>
+					{list.title}
+				</a>
+			);
+		});
 		return (
 			<div className="media">
 				<div className="w1000">
 					<h1>媒体报道</h1>
+					{
+						facade ? (
+							<div className="facade">
+								<a className="facadeImg" href={`/newsInfo/${facade._id}`} style={
+									{
+										backgroundImage : `url(${facade.cover})`
+									}
+								}></a>
+								<a className="title" href={`/newsInfo/${facade._id}`}>
+									{facade.title}
+								</a>
+								<p>
+									{facade.description}
+								</p>
+							</div>
+						) : null
+					}
+					<div className="newsList">
+						{lists}
+					</div>
 				</div>
 			</div>
 		);
