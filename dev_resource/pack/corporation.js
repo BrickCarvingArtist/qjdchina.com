@@ -408,7 +408,7 @@ class DialogContent extends Component{
 									form.component.setState({
 										option : formOption
 									}, () => {
-										e.value = "";
+										e.target.value = "";
 									});
 								});
 							}, dialog);
@@ -528,13 +528,13 @@ class Main extends Component{
 							balance = _data.balanceData;
 						balance.creditLine = _data.credit.creditLine;
 						this.setState({
-							authorized : _data.credit.status === "DONE" ? 2 : _data.credit.status === "REJECT" ? 1 : 0,
+							authorized : _data.credit.status === "DONE" ? 3 : _data.credit.status === "REJECT" ? 2 : 0,
 							balance,
 							creditTime : _data.credit.gmtChecked || ""
 						});
 					}else{
 						this.setState({
-							submit : 1
+							authorized : data.code === "103002002" ? 2 : data.code === "103003001" ? 1 : 0
 						});
 					}
 				}, dialog, 103003001);
@@ -594,13 +594,13 @@ class Main extends Component{
 								<h1>
 									{state.title}
 								</h1>
-								<a className={`auth ${state.authorized >> 1 ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
+								<a className={`auth ${(state.authorized - 1) >> 1 ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
 									<span>
-										{state.authorized >> 1 ? "通过认证" : state.authorized ? "认证失败" : "授信资料未认证"}
+										{(state.authorized - 1) >> 1 ? "通过认证" : state.authorized >> 1 ? "认证失败" : "授信资料未认证"}
 									</span>
 									<br />
 									<span>
-										{state.authorized ? `${state.creditTime.split(/\s/)[0]}` : state.submit ? "认证中" : "点击上传"}
+										{(state.authorized - 1) >> 1 ? `${state.creditTime.split(/\s/)[0]}` : state.authorized >> 1 ? "认证失败" : state.authorized ? "认证中" : "点击上传"}
 									</span>
 								</a>
 								{

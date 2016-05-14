@@ -115,7 +115,7 @@ class DialogContent extends Component{
 						this.setState({
 							option
 						}, () => {
-							e.value = "";
+							e.target.value = "";
 						});
 					}, store.getState().dialog.component);
 				}

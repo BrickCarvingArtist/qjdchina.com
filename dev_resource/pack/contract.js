@@ -110,19 +110,13 @@ class Contract extends Component{
 		let dialog = store.getState().dialog.component,
 			filterState = store.getState().filter.component.state,
 			statuses = filterState.statuses,
-			fromSetting = filterState.failTypes,
-			status,
-			from;
+			status;
 		this.getStatus = () => {
 			status = this.state.status;
 			return status && this.state.option[Object.keys(statuses).indexOf(status)] || {};
 		};
 		this.getFromType = () => {
-			return this.state.from;
-		}
-		this.getFrom = () => {
-			from = this.state.from;
-			return from && fromSetting[from];
+			return this.state.fromType;
 		};
 		this.accept = () => {
 			let state = this.state;
@@ -172,7 +166,8 @@ class Contract extends Component{
 					detail : 1,
 					mobile : _data.mobile,
 					status : _data.status,
-					from : _data.signFailedFrom,
+					fromType : _data.signFailedFrom,
+					from : _data.signFailedFromName,
 					reason : _data.signFailedReason
 				});
 			}, dialog);
@@ -216,13 +211,13 @@ class Contract extends Component{
 							<p>
 								<span>失败来源:</span>
 								<strong>
-									{this.getFrom()}
+									{state.from}
 								</strong>
 							</p>
 							<p>
 								<span>失败原因:</span>
 								<strong>
-									{`客户${this.getFromType() >> 1 ? state.mobile : ""}${state.reason}`}
+									{`客户${this.getFromType() >> 1 ? state.mobile : ""}${state.reason || ""}`}
 								</strong>
 							</p>
 						</div>
@@ -472,6 +467,9 @@ class Tr extends Component{
 		this.getType = () => {
 			option = this.state.option;
 			return setting.types[option.type];
+		};
+		this.getIsFailed = option => {
+			return option.status === "SIGN_FAILURE"
 		};
 	}
 	componentWillReceiveProps(nextProps){

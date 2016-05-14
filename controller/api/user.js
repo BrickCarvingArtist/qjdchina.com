@@ -41,7 +41,6 @@ export default [
 	},
 	{
 		from : "signout",
-		to : "",
 		method : "get",
 		signType : [1, 2],
 		callback(req, res){

@@ -40,7 +40,7 @@ class Upload extends Component{
 							fileName,
 							realPath : data.data.authFile
 						}, () => {
-							e.value = "";
+							e.target.value = "";
 						});
 					}, store.getState().dialog.component);
 				}
