@@ -599,7 +599,7 @@ Table.defaultProps = {
 		code : "合同号",
 		type : "合同类型",
 		projectName : "项目名称",
-		gmtCreated : "时间",
+		signTime : "时间",
 		status : "状态",
 		isSign : "操作"
 	},
