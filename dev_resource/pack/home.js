@@ -206,7 +206,7 @@ class Media extends Component{
 			this.setState({
 				facade : news[0],
 				option : news.filter((list, index) => {
-					return index > 0 && list.top;
+					return index > 0 && index < 5;
 				})
 			});
 		});
