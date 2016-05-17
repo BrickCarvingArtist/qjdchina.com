@@ -195,7 +195,7 @@ class Contract extends Component{
 					</p>
 				</div>
 				{
-					filePath ? <embed type="application/pdf" name="plugin" src={filePath}></embed> : []
+					filePath ? <embed name="plugin" src={filePath}></embed> : []
 				}
 				{
 					status.enable ? [] : (

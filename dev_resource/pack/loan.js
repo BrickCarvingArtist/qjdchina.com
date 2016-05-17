@@ -346,14 +346,15 @@ class Tr extends Component{
 	constructor(props){
 		super(props);
 		this.state = props;
+		this.getType = () => {
+			return !~["TODO", "CHECKING"].indexOf(this.state.option.status);
+		};
 		this.getStatusName = status => {
 			return store.getState().filter.component.getStatus(this)[status];
 		};
 		this.handleStatus = () => {
-			store.getState().content.component.setState(this.getType() ? {
+			this.getType() && store.getState().content.component.setState({
 				loan : 1
-			} : {
-				progress : 1
 			});
 		};
 		this.dateFormat = object => {

@@ -569,9 +569,13 @@ class Tr extends Component{
 			return store.getState().filter.component.getStatus(this)[status];
 		};
 		this.handleStatus = () => {
-			store.getState().content.component.setState({
-				progress : 1
-			});
+			// store.getState().content.component.setState({
+			// 	progress : 1
+			// }, () => {
+			// 	store.getState().progress.component.setState({
+			// 		code : this.state.option.orderCode
+			// 	});
+			// });
 		};
 		this.dateFormat = object => {
 			for(let i in object){
@@ -736,6 +740,7 @@ class Progress extends Component{
 		let lists = [],
 			index = this.state.index || 0,
 			option = this.state.option;
+			console.log(this.state.code)
 		option && option.map((list, index) => {
 			lists.push(
 				<li key={index}>
