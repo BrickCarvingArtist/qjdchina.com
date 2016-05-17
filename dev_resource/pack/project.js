@@ -40,7 +40,7 @@ class Upload extends Component{
 							fileName,
 							realPath : data.data.authFile
 						}, () => {
-							e.target.value = "";
+							this.refs.btnFile.value = "";
 						});
 					}, store.getState().dialog.component);
 				}
@@ -58,7 +58,7 @@ class Upload extends Component{
 		return (
 			<div className="row">
 				<label htmlFor="upload">项目合同</label>
-				<input type="file" name="upload" onChange={this.handleChange} />
+				<input type="file" name="upload" onChange={this.handleChange} ref="btnFile" />
 				<a className="btnUpload">上传</a>
 				<p>
 					<span>

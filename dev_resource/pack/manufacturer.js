@@ -109,8 +109,6 @@ class DialogContent extends Component{
 											},
 											message : "上传成功"
 										}
-									}, () => {
-										e.target.value = "";
 									});
 								});
 							}, dialog);

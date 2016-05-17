@@ -408,7 +408,7 @@ class DialogContent extends Component{
 									form.component.setState({
 										option : formOption
 									}, () => {
-										e.target.value = "";
+										this.refs.btnFile.value = "";
 									});
 								});
 							}, dialog);
@@ -430,7 +430,7 @@ class DialogContent extends Component{
 				{
 					this.state.upload ? (
 						<div className="singleBtn">
-							<input type="file" multiple="multiple" name="upload" onChange={this.handleUpload} />
+							<input type="file" multiple="multiple" name="upload" onChange={this.handleUpload} ref="btnFile" />
 						</div>
 					) : []
 				}
