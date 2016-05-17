@@ -607,13 +607,13 @@ class Main extends Component{
 								<h1>
 									{state.title}
 								</h1>
-								<a className={`auth ${(state.authorized - 1) >> 1 ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
+								<a className={`auth ${state.authorized > 2 ? "authorized" : "notAuthorized"}`} onClick={this.handleClick}>
 									<span>
-										{(state.authorized - 1) >> 1 ? "通过认证" : state.authorized >> 1 ? "认证失败" : "授信资料未认证"}
+										{state.authorized > 2 ? "通过认证" : state.authorized >> 1 ? "认证失败" : "授信资料未认证"}
 									</span>
 									<br />
 									<span>
-										{(state.authorized - 1) >> 1 ? `${state.creditTime.split(/\s/)[0]}` : state.authorized >> 1 ? "认证失败" : state.authorized ? "认证中" : "点击上传"}
+										{state.authorized > 2 ? `${state.creditTime.split(/\s/)[0]}` : state.authorized >> 1 ? "认证失败" : state.authorized ? "认证中" : "点击上传"}
 									</span>
 								</a>
 								{
