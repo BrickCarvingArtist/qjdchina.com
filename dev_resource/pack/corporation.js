@@ -522,22 +522,35 @@ class Main extends Component{
 				url : "/api/manage/getcredit",
 				timeout : 2000
 			}).done(data => {
-				afterSign(data, data => {
-					if(!(data.code - 0)){
-						let _data = data.data,
-							balance = _data.balanceData;
-						balance.creditLine = _data.credit.creditLine;
+				if(!(data.code - 0)){
+					let _data = data.data,
+						balance = _data.balanceData;
+					balance.creditLine = _data.credit.creditLine;
+					this.setState({
+						authorized : _data.credit.status === "DONE" ? 3 : _data.credit.status === "REJECT" ? 2 : 0,
+						balance,
+						creditTime : _data.credit.gmtChecked || ""
+					});
+				}else{
+					if(~["103002002", "106001002", "103003001"].indexOf(data.code)){
 						this.setState({
-							authorized : _data.credit.status === "DONE" ? 3 : _data.credit.status === "REJECT" ? 2 : 0,
-							balance,
-							creditTime : _data.credit.gmtChecked || ""
+							authorized : data.code === "103002002" ? 2 : data.code === "106001002" ? 1 : 0
 						});
 					}else{
-						this.setState({
-							authorized : data.code === "103002002" ? 2 : data.code === "103003001" ? 1 : 0
+						dialog.setState({
+							option : {
+								title : {
+									iconClassName : "info",
+									name : "温馨提示",
+									btnClose : 1
+								},
+								message : data.message
+							},
+							isShow : 1,
+							autoClose : 2
 						});
 					}
-				}, dialog, 103003001);
+				}
 			}).fail(xhr => {
 				xhrTimeout("授信额度", dialog);
 			});
