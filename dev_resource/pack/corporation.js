@@ -320,9 +320,9 @@ class File extends Component{
 					}, () => {
 						let form = store.getState().form,
 							formOption = form.component.state.option;
-						formOption[formOption.findIndex((list, index) => {
+						formOption.filter((list, index) => {
 							return list.file_cate_code === _data.file_cate_code;
-						})].uploads = _data.uploads;
+						})[0].uploads = _data.uploads;
 						form.component.setState({
 							option : formOption
 						});
@@ -380,11 +380,21 @@ class DialogContent extends Component{
 			component : this
 		});
 		this.handleUpload = e => {
+			let s = 0,
+				t = setInterval(() => {
+				console.log(`上传文件至Node服务器,上传中...${++s}s`);
+			}, 1000);
 			$(findDOMNode(this)).ajaxSubmit({
 				type : "post",
 				url : "/api/upload/auth",
 				processData : 1,
 				success : data => {
+					clearInterval(t);
+					s = 0;
+					console.log("上传成功");
+					t = setInterval(() => {
+						console.log(`通知Tomcat服务器更新,响应中...${++s}s`);
+					}, 1000);
 					afterSign(data, data => {
 						$.ajax({
 							type : "post",
@@ -395,6 +405,9 @@ class DialogContent extends Component{
 								filePath : data.data.authFile
 							}
 						}).done(_data => {
+							clearInterval(t);
+							s = 0;
+							console.log("通知成功");
 							afterSign(_data, _data => {
 								let __data = _data.data;
 								this.setState({
@@ -402,9 +415,9 @@ class DialogContent extends Component{
 								}, () => {
 									let form = store.getState().form,
 										formOption = form.component.state.option;
-									formOption[formOption.findIndex((list, index) => {
+									formOption.filter((list, index) => {
 										return list.file_cate_code === __data.file_cate_code;
-									})].uploads = __data.uploads;
+									})[0].uploads = __data.uploads;
 									form.component.setState({
 										option : formOption
 									}, () => {
@@ -496,7 +509,7 @@ Balance.defaultProps = {
 			label : "银行存款余额"
 		},
 		{
-			name : "billBlance",
+			name : "billBalance",
 			label : "票据余额"
 		}
 	]

@@ -191,7 +191,7 @@ class Form extends Component{
 							{list.label}
 						</label>
 						<SelectGroup id={list.id} default={info} option={
-							info && areaConfig.length ? this.getArea(info.provinceCode, info.cityCode, info.areaCode) : areaConfig
+							info && areaConfig.length ? this.getArea(info.provinceCode, info.cityCode.slice(0, 4), info.areaCode) : areaConfig
 						} checkType="region" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
 								this.setState({

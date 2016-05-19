@@ -239,13 +239,13 @@ Contract.defaultProps = {
 		{
 			enable : 1,
 			title : "此份合同签约失败",
-			note : "卧槽",
+			note : "",
 			className : "failure"
 		},
 		{
 			enable : 1,
 			title : "此份合同已成功签约",
-			note : "卧槽",
+			note : "",
 			className : "done"
 		}
 	]
@@ -496,7 +496,7 @@ class Tr extends Component{
 								i === "type" ? (
 									this.getType()
 								) : 
-									i === "code" || i === "projectName" ? (
+									i === "projectName" ? (
 											<div>
 												{option[i]}
 											</div>
