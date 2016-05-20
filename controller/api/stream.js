@@ -20,7 +20,7 @@ export default [
 	},
 	{
 		from : "manufacturer",
-		to : `${BaseUrl}clms/front/partner/browse`,
+		to : `${BaseUrl}cif/front/partner/browse`,
 		method : "get",
 		signType : [2]
 	}
