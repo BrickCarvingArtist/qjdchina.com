@@ -20,7 +20,7 @@ export default [
 				if(response.statusCode === 200){
 					let phone = req.body.phone,
 						responseCookie = response.headers["set-cookie"];
-					if(responseCookie){
+					if(responseCookie && !(JSON.parse(body).code - 0)){
 						responseCookie.map(list => {
 							let oCookie = parse(list),
 								cookieName = Object.keys(oCookie)[0];

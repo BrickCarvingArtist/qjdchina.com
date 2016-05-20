@@ -605,6 +605,15 @@ class Tr extends Component{
 		this.getClassName = status => {
 			return status === "DONE" ? "off" : status === "UNINTEREST" || status === "INTERESTING" ? "normal" : "dalay";
 		};
+		this.getFormatNumber = number => {
+			let temp = (number.toString().replace(/,/g, "") - 0).toFixed(2).split(/\./),
+				arr = [];
+			temp[0].toString().split("").map(function(list, index, _arr){
+				index && index % 3 === _arr.length % 3 && arr.push(",");
+				arr.push(list);
+			});
+			return `${arr.join("")}.${temp[1]}`;
+		};
 	}
 	componentWillReceiveProps(nextProps){
 		this.setState(nextProps);
@@ -630,7 +639,7 @@ class Tr extends Component{
 								i === "orderCode" || i === "projectName" ? (
 									<div>{option[i]}</div>
 								) :
-									`${option[i]}${i === "purchaseAmount" || i === "doneAmount" ? "元" : ""}` : (
+									`${i === "purchaseAmount" || i === "doneAmount" ? this.getFormatNumber(option[i]) : option[i]}${i === "purchaseAmount" || i === "doneAmount" ? "元" : ""}` : (
 										<a className="btnFile" onClick={this.handleFile}>文件</a>
 									)
 					}

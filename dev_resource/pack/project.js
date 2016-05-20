@@ -146,6 +146,15 @@ class Form extends Component{
 		this.getAddress = (arrAddress, type) => {
 			return arrAddress[type];
 		};
+		this.getFormatNumber = number => {
+			let temp = (number.toString().replace(/,/g, "") - 0).toFixed(2).split(/\./),
+				arr = [];
+			temp[0].toString().split("").map(function(list, index, _arr){
+				index && index % 3 === _arr.length % 3 && arr.push(",");
+				arr.push(list);
+			});
+			return `${arr.join("")}.${temp[1]}`;
+		};
 		//所在地
 		this.getArea = (provinceCode, cityCode, areaCode) => {
 			let areaConfig = this.state.areaConfig,
@@ -180,7 +189,7 @@ class Form extends Component{
 			address = this.refs.street.value;
 			projectParty = this.getIptVal("projectParty");
 			contractAmount = this.getIptVal("contractAmount");
-			loanAmount = this.getIptVal("loanAmount");
+			loanAmount = this.getIptVal("loanAmount").replace(/,/g, "");
 			projectContractPath = this.refs.upload.state.realPath;
 			$.ajax({
 				type : "post",
@@ -262,7 +271,7 @@ class Form extends Component{
 		option.map((list, index) => {
 			if(list.iptType){
 				lists.push(
-					<InputRow option={list} key={index} ref={list.id} value={project ? project[list.id] : undefined} />
+					<InputRow option={list} key={index} ref={list.id} value={project ? list.id === "contractAmount" ? this.getFormatNumber(project[list.id]) : project[list.id] : undefined} validate={list.id === "loanAmount" ? this.getFormatNumber : undefined} />
 				);
 			}else{
 				list.id === "address" && lists.push(
@@ -380,7 +389,7 @@ Form.defaultProps = {
 			id : "loanAmount",
 			className : "ipt-txt",
 			label : "申请金额",
-			maxlength : 15,
+			maxlength : 18,
 			unit : "元"
 		},
 		{
@@ -608,6 +617,15 @@ class Table extends Component{
 				region = areaConfig[2];
 			return `${province[provinceCode]}${city[provinceCode][cityCode] || ""}`;
 		};
+		this.getFormatNumber = number => {
+			let temp = (number.toString().replace(/,/g, "") - 0).toFixed(2).split(/\./),
+				arr = [];
+			temp[0].toString().split("").map(function(list, index, _arr){
+				index && index % 3 === _arr.length % 3 && arr.push(",");
+				arr.push(list);
+			});
+			return `${arr.join("")}.${temp[1]}`;
+		};
 	}
 	componentWillReceiveProps(nextProps){
 		this.setState(nextProps);
@@ -644,7 +662,7 @@ class Table extends Component{
 						{list.product ? list.product.name : "无产品"}
 					</td>
 					<td>
-						{`${list.loanAmount}元`}
+						{`${this.getFormatNumber(list.loanAmount)}元`}
 					</td>
 					<td>
 						{list.gmtCreated}

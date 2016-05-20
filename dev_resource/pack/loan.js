@@ -35,6 +35,15 @@ class Loan extends Component{
 				}
 			}
 		};
+		this.getFormatNumber = number => {
+			let temp = (number.toString().replace(/,/g, "") - 0).toFixed(2).split(/\./),
+				arr = [];
+			temp[0].toString().split("").map(function(list, index, _arr){
+				index && index % 3 === _arr.length % 3 && arr.push(",");
+				arr.push(list);
+			});
+			return `${arr.join("")}.${temp[1]}`;
+		};
 	}
 	componentDidMount(){
 		$.ajax({
@@ -84,9 +93,9 @@ class Loan extends Component{
 				<ul className="iconInfo">
 					<li>
 						<i className="lock"></i>
-						<span>待付贷款</span>
+						<span>待付货款</span>
 						<span>
-							{state.detail ? `${state.detail.principalRemain}元` : ""}
+							{state.detail ? `${this.getFormatNumber(state.detail.principalRemain)}元` : ""}
 						</span>
 					</li>
 					<li>
@@ -112,7 +121,7 @@ class Loan extends Component{
 								<p>
 									<span>逾期应付总额</span>
 									<strong>
-										{state.detail ? state.detail.minRepayAmount : ""}
+										{this.getFormatNumber(state.detail.minRepayAmount)}
 									</strong>
 									<span>元</span>
 								</p>
@@ -124,7 +133,7 @@ class Loan extends Component{
 						<p>
 							<span>本期应付总额</span>
 							<strong>
-								{state.detail ? state.detail.currentTotalRepay : ""}
+								{state.detail ? this.getFormatNumber(state.detail.currentTotalRepay) : ""}
 							</strong>
 							<span>元</span>
 						</p>
@@ -138,7 +147,7 @@ class Loan extends Component{
 						<p>
 							<span>全部应付总额</span>
 							<strong>
-								{state.detail ? state.detail.maxRepayAmount : ""}
+								{state.detail ? this.getFormatNumber(state.detail.maxRepayAmount) : ""}
 							</strong>
 							<span>元</span>
 						</p>
@@ -367,6 +376,15 @@ class Tr extends Component{
 		this.getClassName = status => {
 			return status === "DONE" ? "off" : status === "UNINTEREST" || status === "INTERESTING" ? "normal" : "dalay";
 		};
+		this.getFormatNumber = number => {
+			let temp = (number.toString().replace(/,/g, "") - 0).toFixed(2).split(/\./),
+				arr = [];
+			temp[0].toString().split("").map(function(list, index, _arr){
+				index && index % 3 === _arr.length % 3 && arr.push(",");
+				arr.push(list);
+			});
+			return `${arr.join("")}.${temp[1]}`;
+		};
 	}
 	componentWillReceiveProps(nextProps){
 		this.setState(nextProps);
@@ -392,7 +410,7 @@ class Tr extends Component{
 								i === "id" || i === "orderCode" || i === "projectName" ? (
 									<div>{option[i]}</div>
 								) : 
-									`${option[i]}${i === "amount" ? "元" : ""}` : "未放款"
+									`${i === "amount" ? this.getFormatNumber(option[i]) : option[i]}${i === "amount" ? "元" : ""}` : "未放款"
 					}
 				</td>
 			);

@@ -17,5 +17,11 @@ export default [
 		to : `${BaseUrl}clms/front/contract/loadFile`,
 		method : "get",
 		signType : [2]
+	},
+	{
+		from : "manufacturer",
+		to : `${BaseUrl}clms/front/partner/browse`,
+		method : "get",
+		signType : [2]
 	}
 ];

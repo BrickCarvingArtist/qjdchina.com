@@ -33,7 +33,7 @@ class File extends Component{
 			isUpload = dialogContent.state.upload;
 		return (
 			<li>
-				<a target="_blank">
+				<a target="_blank" href={`/api/stream/manufacturer?partnerId=${store.getState().dialogContent.component.state.manufacturerId}`}>
 					{`文件${index + 1}`}
 				</a>
 			</li>

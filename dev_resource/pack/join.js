@@ -34,11 +34,14 @@ class Form extends Component{
 				return arrAddress[type];
 			},
 			//合作厂家下拉框
-			getManufacturer = ([...arrManufacturer]) => {
-				let manufacturer = {
-					categoryCode : arrManufacturer[0],
-					supplierId : arrManufacturer[1]
-				};
+			getManufacturer = arrManufacturer => {
+				let manufacturer;
+				if(arrManufacturer && arrManufacturer.length >> 1){
+					manufacturer = JSON.stringify([{
+						categoryCode : arrManufacturer[0],
+						supplierId : arrManufacturer[1]
+					}]);
+				}
 				return manufacturer;
 			};
 		this.handleStreet = () => {
@@ -83,10 +86,11 @@ class Form extends Component{
 			$.ajax({
 				type : "post",
 				url : "/api/user/join",
+				timeout : 2000,
 				data : {
 					mobile,
 					contactName,
-					cats : JSON.stringify([manufacturer]),
+					cats : manufacturer,
 					regCode,
 					address,
 					areaCode,

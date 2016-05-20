@@ -481,7 +481,7 @@ class Balance extends Component{
 					<strong className="txt4">
 						{title[i].label}
 					</strong>
-					<p className="txt1">
+					<p>
 						{this.getFormatNumber((option[title[i].name] || 0).toFixed(2))}
 					</p>
 				</div>

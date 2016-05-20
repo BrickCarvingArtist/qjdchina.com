@@ -7,8 +7,9 @@ export default class InputRow extends Component{
 		this.validate = e => {
 			let validate = this.state.validate;
 			if(validate){
-				let message = Validate(this.state.option.label, e.target.value, validate.type);
-				validate.callback(message);
+				// let message = Validate(this.state.option.label, e.target.value, validate.type);
+				// validate.callback(message);
+				e.target.value = validate(e.target.value);
 			}
 		};
 		this.handleSubmit = e => {
@@ -34,7 +35,6 @@ export default class InputRow extends Component{
 					maxLength={option.maxlength}
 					readOnly={option.readOnly}
 					value={state.value}
-					onChange={this.validate}
 					onBlur={this.validate}
 					onKeyDown={this.handleSubmit}
 					ref="ipt" />
