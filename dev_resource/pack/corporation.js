@@ -90,7 +90,7 @@ Progress.defaultProps = {
 		{
 			className : "step1",
 			name : "认证申请",
-			message : "您的审核已开始，我们将尽快安排专属服务人员与您联系"
+			message : "请上传认证资料，我们将尽快安排专属服务人员与您联系"
 		},
 		{
 			className : "step1",

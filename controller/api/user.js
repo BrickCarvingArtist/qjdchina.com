@@ -41,13 +41,18 @@ export default [
 	},
 	{
 		from : "signout",
+		to : `${BaseUrl}cif/front/user/logout`,
 		method : "get",
 		signType : [1, 2],
-		callback(req, res){
-			res.clearCookie("sso_cookie").clearCookie("JSESSIONID").clearCookie("username").clearCookie("corpname").clearCookie("signtype").json({
-				code : 403,
-				message : "期待下次您的下次登录"
-			});
+		callback(err, response, body, req, res){
+			if(err){
+				console.log(err);
+			}else{
+				!(JSON.parse(body).code - 0) && res.clearCookie("sso_cookie").clearCookie("JSESSIONID").clearCookie("username").clearCookie("corpname").clearCookie("signtype").json({
+					code : 403,
+					message : "期待下次您的下次登录"
+				});
+			}
 		}
 	},
 	{

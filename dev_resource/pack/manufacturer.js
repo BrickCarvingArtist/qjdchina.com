@@ -109,6 +109,8 @@ class DialogContent extends Component{
 											},
 											message : "上传成功"
 										}
+									}, () => {
+										store.getState().table.component.getData();
 									});
 								});
 							}, dialog);

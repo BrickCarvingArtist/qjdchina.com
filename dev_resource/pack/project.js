@@ -188,7 +188,7 @@ class Form extends Component{
 			categoryCode = state.category;
 			address = this.refs.street.value;
 			projectParty = this.getIptVal("projectParty");
-			contractAmount = this.getIptVal("contractAmount");
+			contractAmount = this.getIptVal("contractAmount").replace(/,/g, "");
 			loanAmount = this.getIptVal("loanAmount").replace(/,/g, "");
 			projectContractPath = this.refs.upload.state.realPath;
 			$.ajax({
@@ -280,7 +280,7 @@ class Form extends Component{
 							{list.label}
 						</label>
 						<SelectGroup id={list.id} default={project} option={
-							project && areaConfig.length ? this.getArea(project.provinceCode, project.cityCode, project.areaCode) : areaConfig
+							project && areaConfig.length ? this.getArea(project.provinceCode, project.cityCode.slice(0, 4), project.areaCode) : areaConfig
 						} checkType="region" ref={list.id} callback={
 							(completeStatus, selectIndex) => {
 								this.setState({
@@ -389,7 +389,7 @@ Form.defaultProps = {
 			id : "loanAmount",
 			className : "ipt-txt",
 			label : "申请金额",
-			maxlength : 18,
+			maxlength : 15,
 			unit : "元"
 		},
 		{
@@ -662,7 +662,7 @@ class Table extends Component{
 						{list.product ? list.product.name : "无产品"}
 					</td>
 					<td>
-						{`${this.getFormatNumber(list.loanAmount)}元`}
+						{`${this.getFormatNumber(list.loanAmount || 0)}元`}
 					</td>
 					<td>
 						{list.gmtCreated}
